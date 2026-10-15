@@ -46,6 +46,21 @@ traitements de préparation des référentiels.
 - **DSFR** : intégré avec `@codegouvfr/react-dsfr`. Seules les icônes DSFR utilisées dans le code
   sont incluses (`react-dsfr update-icons`, lancé avant `dev` et `build`).
 
+## Intégration continue et déploiement
+
+- **GitHub Actions** (`.github/workflows/ci.yml`), sur chaque PR et sur `main` : lint, typecheck,
+  build, puis démarrage du serveur comme sur Scalingo et appel de `/api/health`.
+- **Scalingo**, avec le buildpack Node.js, sans configuration propre au projet :
+  - `npm ci`, dépendances de développement comprises, puis `npm run build` ;
+  - les dépendances de développement sont retirées à la fin du build : le serveur ne doit pas en
+    dépendre à l'exécution ;
+  - démarrage par `npm start` (le script `start`, faute de `Procfile`).
+- **Version de Node.js** : pour `engines.node` `>=24`, le buildpack Scalingo prend la dernière
+  version de l'Active LTS (24 au 15 octobre 2026) et signale la plage large dans les logs de build.
+  La CI suit la même règle (`lts/*`).
+- **Variables d'environnement** : aucune à définir. Scalingo fournit `PORT`, et `NODE_ENV` vaut
+  `production` par défaut.
+
 ## Questions ouvertes
 
 - **Format des référentiels sur S3** : à définir.
