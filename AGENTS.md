@@ -4,6 +4,16 @@ Mon Parc Marin est un service public de l'OFB, sans
 authentification. Il informe les porteurs de projet au regard des parcs naturels marins.
 Contexte, architecture et parcours : [`docs/`](docs/README.md).
 
+## Commandes
+
+```bash
+npm install
+npm run dev         # API + front sur http://localhost:3000, un seul processus
+npm run typecheck
+npm run lint        # xo, avec --fix pour corriger
+npm run build       # build du front, avant npm start
+```
+
 ## Git : dépôt public de l'État
 
 - Jamais de push, d'issue ni de PR sans accord explicite. Un agent ne merge jamais.
