@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          # Same rule as the Scalingo buildpack for engines.node ">=24": the Active LTS
+          node-version: lts/*
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+
+      - name: Start the server as Scalingo does
+        run: |
+          npm start &
+          for i in $(seq 1 20); do
+            curl -fs http://localhost:3000/api/health && exit 0
+            sleep 1
+          done
+          exit 1
