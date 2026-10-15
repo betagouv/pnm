@@ -1,11 +1,12 @@
 import {headerFooterDisplayItem} from '@codegouvfr/react-dsfr/Display'
 import {Footer} from '@codegouvfr/react-dsfr/Footer'
 import {Header} from '@codegouvfr/react-dsfr/Header'
+import type {MainNavigationProps} from '@codegouvfr/react-dsfr/MainNavigation'
 import {SkipLinks} from '@codegouvfr/react-dsfr/SkipLinks'
 import {useIsDark} from '@codegouvfr/react-dsfr/useIsDark'
-import logoOfbDark from './assets/logo-ofb-dark.svg'
-import logoOfb from './assets/logo-ofb.svg'
-import {HomePage} from './pages/home-page.tsx'
+import type {ReactNode} from 'react'
+import logoOfbDark from '../assets/logo-ofb-dark.svg'
+import logoOfb from '../assets/logo-ofb.svg'
 
 const brandTop = (
   <>
@@ -15,9 +16,14 @@ const brandTop = (
   </>
 )
 
-const homeLinkProps = {href: '/', title: 'Accueil - Mon Parc Marin'}
+const homeLinkProps = {to: '/', title: 'Accueil - Mon Parc Marin'}
 
-export function App() {
+type PageLayoutProps = {
+  readonly navigation: MainNavigationProps.Item[]
+  readonly children?: ReactNode
+}
+
+export function PageLayout({navigation, children}: PageLayoutProps) {
   const {isDark} = useIsDark()
 
   const operatorLogo = {
@@ -40,9 +46,10 @@ export function App() {
         operatorLogo={operatorLogo}
         serviceTitle='Mon Parc Marin'
         serviceTagline='Votre projet dans un parc naturel marin'
+        navigation={navigation}
       />
       <main id='contenu' tabIndex={-1}>
-        <HomePage />
+        {children}
       </main>
       <Footer
         id='footer'
