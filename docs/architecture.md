@@ -21,7 +21,7 @@
 
 À valider à l'initialisation du monorepo.
 
-```
+```text
 apps/
   api/        @pnm/api     API Express/Zod : un routeur, sans connaissance du front
   web/        @pnm/web     front React/Vite/DSFR, sans connaissance du serveur

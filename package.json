@@ -1,0 +1,25 @@
+{
+  "name": "pnm",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "predev": "npm run dsfr:icons -w @pnm/web",
+    "dev": "npm run dev -w @pnm/server",
+    "build": "npm run build -w @pnm/web",
+    "start": "npm start -w @pnm/server",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "xo"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "^6.0.3",
+    "xo": "^5.0.1"
+  }
+}
