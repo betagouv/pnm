@@ -4,6 +4,8 @@
 
 ## Vue d'ensemble
 
+La page d'accueil présente le service. Ce n'est pas la mire des parcs.
+
 1. **Choix du parc.** Une mire présente tous les parcs naturels marins. Le porteur choisit celui
    qui concerne son projet.
 2. **Parcours guidé**, en plusieurs étapes :

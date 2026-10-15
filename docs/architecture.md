@@ -17,25 +17,36 @@
 | Hébergement de l'application | Scalingo |
 | Stockage objet (S3) | Scaleway |
 
-## Proposition d'organisation du code
-
-À valider à l'initialisation du monorepo.
+## Organisation du code
 
 ```text
 apps/
-  api/        @pnm/api     API Express/Zod : un routeur, sans connaissance du front
+  api/        @pnm/api     API Express : un routeur, sans connaissance du front
   web/        @pnm/web     front React/Vite/DSFR, sans connaissance du serveur
-  server/     @pnm/server  processus web unique : monte l'API sous /api, sert le build du front
-packages/                  code partagé au besoin (schémas Zod communs au front et à l'API)
-pipelines/                 traitements de préparation des référentiels, publiés sur S3
+  server/     @pnm/server  processus web unique : monte l'API sous /api, sert le front
 docs/
 ```
 
 Seul `@pnm/server` dépend à la fois de l'API et du front. C'est ce qui garde les deux séparés.
+`@pnm/web` expose dans `serve.ts` ce dont le serveur a besoin pour le servir : le dossier du build
+et, en développement, le middleware Vite.
+
+À venir : `packages/` pour le code partagé entre front et API (schémas Zod), `pipelines/` pour les
+traitements de préparation des référentiels.
+
+## Exécution
+
+- Node.js ≥ 24 exécute directement le TypeScript du serveur et de l'API (suppression des types,
+  sans étape de build). Le code doit donc s'en tenir à la syntaxe effaçable : pas d'`enum`, pas de
+  `namespace`, imports relatifs avec l'extension `.ts`.
+- **Développement** : un seul processus. Vite tourne en mode middleware dans Express (`npm run
+  dev`), avec rechargement à chaud du front et redémarrage du serveur quand l'API change.
+- **Production** : `npm run build` produit le front dans `apps/web/dist`, puis `npm start` sert
+  l'API et ces fichiers statiques.
+- **DSFR** : intégré avec `@codegouvfr/react-dsfr`. Seules les icônes DSFR utilisées dans le code
+  sont incluses (`react-dsfr update-icons`, lancé avant `dev` et `build`).
 
 ## Questions ouvertes
 
-- **Intégration React du DSFR** : `@codegouvfr/react-dsfr` est la bibliothèque de référence.
-- **Développement local** : un seul processus (Vite en mode middleware dans Express)
 - **Format des référentiels sur S3** : à définir.
-- **Cartographie** : MapLibre GL JS + fonds de carte à définir
+- **Cartographie** : MapLibre GL JS, fonds de carte à définir.
