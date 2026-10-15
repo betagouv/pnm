@@ -1,0 +1,25 @@
+{
+  "name": "@pnm/web",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./serve": "./serve.ts"
+  },
+  "scripts": {
+    "dsfr:icons": "react-dsfr update-icons",
+    "prebuild": "npm run dsfr:icons",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json"
+  },
+  "dependencies": {
+    "@codegouvfr/react-dsfr": "^1.36.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "vite": "^8.3.4"
+  }
+}
