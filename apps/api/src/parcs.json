@@ -1,0 +1,58 @@
+[
+  {
+    "id": "estuaires-picards-mer-opale",
+    "nom": "Estuaires picards et mer d'Opale",
+    "nomComplet": "Parc naturel marin des estuaires picards et de la mer d'Opale",
+    "localisation": "Manche – mer du Nord",
+    "disponible": false
+  },
+  {
+    "id": "iroise",
+    "nom": "Iroise",
+    "nomComplet": "Parc naturel marin d'Iroise",
+    "localisation": "Atlantique",
+    "disponible": false
+  },
+  {
+    "id": "bassin-arcachon",
+    "nom": "Bassin d'Arcachon",
+    "nomComplet": "Parc naturel marin du Bassin d'Arcachon",
+    "localisation": "Atlantique",
+    "disponible": false
+  },
+  {
+    "id": "gironde-pertuis",
+    "nom": "Estuaire de la Gironde et mer des Pertuis",
+    "nomComplet": "Parc naturel marin de l'estuaire de la Gironde et de la mer des Pertuis",
+    "localisation": "Atlantique",
+    "disponible": false
+  },
+  {
+    "id": "golfe-du-lion",
+    "nom": "Golfe du Lion",
+    "nomComplet": "Parc naturel marin du Golfe du Lion",
+    "localisation": "Méditerranée",
+    "disponible": false
+  },
+  {
+    "id": "cap-corse-agriate",
+    "nom": "Cap Corse et Agriate",
+    "nomComplet": "Parc naturel marin du Cap Corse et de l'Agriate",
+    "localisation": "Méditerranée",
+    "disponible": true
+  },
+  {
+    "id": "mayotte",
+    "nom": "Mayotte",
+    "nomComplet": "Parc naturel marin de Mayotte",
+    "localisation": "Océan Indien",
+    "disponible": false
+  },
+  {
+    "id": "martinique",
+    "nom": "Martinique",
+    "nomComplet": "Parc naturel marin de Martinique",
+    "localisation": "Antilles",
+    "disponible": false
+  }
+]
