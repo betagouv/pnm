@@ -31,6 +31,20 @@ Seul `@pnm/server` dépend à la fois de l'API et du front. C'est ce qui garde l
 `@pnm/web` expose dans `serve.ts` ce dont le serveur a besoin pour le servir : le dossier du build
 et, en développement, le middleware Vite.
 
+### Front (`apps/web/src`)
+
+- `components/` : composants UI, pilotés par leurs props (`PageLayout`, `ParcTiles`).
+- `pages/` et `app-layout.tsx` : composants de haut niveau, qui lisent les données et l'adresse.
+- `router.tsx` : les routes, avec React Router en mode données. Les loaders chargent les parcs
+  depuis l'API avant d'afficher une page, et un parc inconnu donne une page 404.
+- `parcs.ts` : le type `Parc`, l'appel à `/api/parcs` et la construction des chemins.
+
+### API (`apps/api/src`)
+
+- `GET /api/parcs` : la liste des parcs, lue dans `parcs.json` et validée par Zod au démarrage.
+  Une donnée mal formée empêche le serveur de démarrer plutôt que d'arriver aux utilisateurs.
+- Le front déclare son propre type `Parc`. Le contrat passera dans `packages/` quand il grossira.
+
 À venir : `packages/` pour le code partagé entre front et API (schémas Zod), `pipelines/` pour les
 traitements de préparation des référentiels.
 

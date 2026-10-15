@@ -33,8 +33,9 @@ npm run build       # build du front, avant npm start
 ## Front
 
 - DSFR obligatoire : ses composants et ses classes, pas d'autre bibliothèque UI ni de style maison sauf pour ce que le DSFR ne propose pas
-- Séparer les composants UI (présentation pure, pilotés par leurs props) des composants de haut
-  niveau (données, état, logique métier). Cette séparation s'installe progressivement.
+- Séparer les composants UI (présentation pure, pilotés par leurs props, dans
+  `apps/web/src/components/`) des composants de haut niveau (données, état, logique métier, dans
+  `apps/web/src/pages/`). Cette séparation s'installe progressivement.
 - Vérifier toute modification d'interface avec agent-browser : conformité aux éléments fournis,
   fonctionnement sur mobile (`agent-browser set viewport 375 812`) et sur desktop.
 
