@@ -1,12 +1,5 @@
+import type {Parc} from '@pnm/shared'
 import {useRouteLoaderData} from 'react-router'
-
-export type Parc = {
-  id: string
-  nom: string
-  nomComplet: string
-  localisation: string
-  disponible: boolean
-}
 
 export const parcsRouteId = 'root'
 export const parcRouteId = 'parc'

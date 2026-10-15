@@ -1,6 +1,6 @@
 import {Badge} from '@codegouvfr/react-dsfr/Badge'
 import {Tile} from '@codegouvfr/react-dsfr/Tile'
-import type {Parc} from '../parcs.ts'
+import type {Parc} from '@pnm/shared'
 
 type ParcTilesProps = {
   readonly parcs: readonly Parc[]

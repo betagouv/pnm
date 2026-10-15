@@ -30,6 +30,12 @@ npm run build       # build du front, avant npm start
   [`docs/glossaire.md`](docs/glossaire.md).
 - Interface et `docs/` en français.
 
+## Types
+
+- Un type n'est déclaré qu'une fois, dans du code partagé : `packages/shared` (`@pnm/shared`),
+  sous forme de schéma Zod dont on déduit le type. L'API valide avec les schémas, le front
+  n'importe que les types (`import type`).
+
 ## Front
 
 - DSFR obligatoire : ses composants et ses classes, pas d'autre bibliothèque UI ni de style maison sauf pour ce que le DSFR ne propose pas

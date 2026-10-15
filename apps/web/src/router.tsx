@@ -1,3 +1,4 @@
+import type {Parc} from '@pnm/shared'
 import {
   createBrowserRouter,
   data,
@@ -18,7 +19,6 @@ import {
   parcPath,
   parcRouteId,
   parcsRouteId,
-  type Parc,
 } from './parcs.ts'
 
 async function loadParc({params}: LoaderFunctionArgs): Promise<Parc> {

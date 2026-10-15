@@ -24,6 +24,8 @@ apps/
   api/        @pnm/api     API Express : un routeur, sans connaissance du front
   web/        @pnm/web     front React/Vite/DSFR, sans connaissance du serveur
   server/     @pnm/server  processus web unique : monte l'API sous /api, sert le front
+packages/
+  shared/     @pnm/shared  schémas Zod et types partagés entre l'API et le front
 docs/
 ```
 
@@ -37,16 +39,22 @@ et, en développement, le middleware Vite.
 - `pages/` et `app-layout.tsx` : composants de haut niveau, qui lisent les données et l'adresse.
 - `router.tsx` : les routes, avec React Router en mode données. Les loaders chargent les parcs
   depuis l'API avant d'afficher une page, et un parc inconnu donne une page 404.
-- `parcs.ts` : le type `Parc`, l'appel à `/api/parcs` et la construction des chemins.
+- `parcs.ts` : l'appel à `/api/parcs` et la construction des chemins.
 
 ### API (`apps/api/src`)
 
 - `GET /api/parcs` : la liste des parcs, lue dans `parcs.json` et validée par Zod au démarrage.
   Une donnée mal formée empêche le serveur de démarrer plutôt que d'arriver aux utilisateurs.
-- Le front déclare son propre type `Parc`. Le contrat passera dans `packages/` quand il grossira.
 
-À venir : `packages/` pour le code partagé entre front et API (schémas Zod), `pipelines/` pour les
-traitements de préparation des référentiels.
+### Code partagé (`packages/shared`)
+
+- Un type n'est déclaré qu'une fois. Ce qui sert à l'API et au front vit ici, sous forme de schéma
+  Zod dont on déduit le type (`Parc`, `parcSchema`, `parcsSchema`).
+- L'API valide ses données avec les schémas. Le front n'importe que les types (`import type`) :
+  Zod n'entre pas dans son bundle.
+- Ce code ne dépend ni de Node.js ni du navigateur.
+
+À venir : `pipelines/` pour les traitements de préparation des référentiels.
 
 ## Exécution
 
