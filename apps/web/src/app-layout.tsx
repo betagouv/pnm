@@ -1,5 +1,10 @@
 import type {MainNavigationProps} from '@codegouvfr/react-dsfr/MainNavigation'
-import {Outlet, useLocation, useMatch} from 'react-router'
+import {
+  Outlet,
+  ScrollRestoration,
+  useLocation,
+  useMatch,
+} from 'react-router'
 import {PageLayout} from './components/page-layout.tsx'
 import {
   parcPath,
@@ -44,6 +49,10 @@ export function AppLayout() {
   return (
     <PageLayout navigation={navigation}>
       <Outlet />
+      {/* Every first page of a tab has the key "default": the path tells them apart */}
+      <ScrollRestoration
+        getKey={location => location.key === 'default' ? location.pathname : location.key}
+      />
     </PageLayout>
   )
 }
