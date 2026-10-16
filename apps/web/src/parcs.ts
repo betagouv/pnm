@@ -1,4 +1,4 @@
-import type {Parc} from '@pnm/shared'
+import type {MultiPolygon, Parc} from '@pnm/shared'
 import {useRouteLoaderData} from 'react-router'
 import {fetchApi} from './api.ts'
 
@@ -13,6 +13,10 @@ export function parcPath(parcId: string, section = 'preparer-mon-projet'): strin
 
 export async function fetchParcs(): Promise<Parc[]> {
   return fetchApi<Parc[]>('/parcs')
+}
+
+export async function fetchPerimetre(parcId: string): Promise<MultiPolygon> {
+  return fetchApi<MultiPolygon>(`/parcs/${parcId}/perimetre`)
 }
 
 export function useParcs(): Parc[] {

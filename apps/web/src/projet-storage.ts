@@ -1,4 +1,4 @@
-import type {Projet} from '@pnm/shared'
+import type {Element, Position, Projet} from '@pnm/shared'
 import {useSyncExternalStore} from 'react'
 
 // The projet in progress stays in the browser, one per browser. It will move to a database,
@@ -18,7 +18,49 @@ function readStored(): string | undefined {
   }
 }
 
-// The stored value comes from an earlier visit, maybe from an older version of the site
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function isPositions(value: unknown, minLength: number): value is Position[] {
+  return Array.isArray(value)
+    && value.length >= minLength
+    && value.every(position => Array.isArray(position)
+      && position.length === 2
+      && position.every(coordinate => typeof coordinate === 'number'))
+}
+
+function isDistance(value: unknown): value is number {
+  return Number.isSafeInteger(value) && (value as number) >= 0
+}
+
+// Mirrors the element schema of @pnm/shared, which the front does not bundle
+function isElement(value: unknown): value is Element {
+  if (!isRecord(value) || typeof value.id !== 'string') {
+    return false
+  }
+
+  switch (value.type) {
+    case 'lieux': {
+      return isPositions(value.positions, 1) && isDistance(value.rayon)
+    }
+
+    case 'parcours': {
+      return isPositions(value.positions, 2) && typeof value.boucle === 'boolean' && isDistance(value.largeur)
+    }
+
+    case 'zone': {
+      return isPositions(value.positions, 3) && isDistance(value.marge)
+    }
+
+    default: {
+      return false
+    }
+  }
+}
+
+// The stored value comes from an earlier visit, maybe from an older version of the site.
+// What no longer makes sense is dropped
 function parseProjet(stored: string | undefined): Projet | undefined {
   if (stored === undefined) {
     return undefined
@@ -27,15 +69,17 @@ function parseProjet(stored: string | undefined): Projet | undefined {
   try {
     const value: unknown = JSON.parse(stored)
 
-    if (typeof value !== 'object' || value === null) {
+    if (!isRecord(value) || typeof value.parc !== 'string') {
       return undefined
     }
 
-    const {parc, activite} = value as Record<string, unknown>
-    const isProjet = typeof parc === 'string'
-      && (activite === undefined || typeof activite === 'string')
+    const {parc, activite, localisation} = value
 
-    return isProjet ? {parc, activite} : undefined
+    return {
+      parc,
+      activite: typeof activite === 'string' ? activite : undefined,
+      localisation: Array.isArray(localisation) ? localisation.filter(element => isElement(element)) : undefined,
+    }
   } catch {
     return undefined
   }

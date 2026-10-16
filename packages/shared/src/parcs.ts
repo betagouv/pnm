@@ -6,6 +6,8 @@ export const parcSchema = z.object({
   nomComplet: z.string().min(1),
   localisation: z.string().min(1),
   disponible: z.boolean(),
+  // Identifier of the protected area in the national register (INPN), e.g. "FR9100008"
+  mnhnId: z.string().regex(/^FR\d{7}$/v),
 })
 
 export const parcsSchema = z

@@ -1,4 +1,4 @@
-import type {Activite} from '@pnm/shared'
+import type {Activite, Element, Position} from '@pnm/shared'
 import {useRouteLoaderData} from 'react-router'
 import {fetchApi} from './api.ts'
 import {parcPath} from './parcs.ts'
@@ -25,6 +25,42 @@ export async function fetchActivites(): Promise<Activite[]> {
 
 export function useActivites(): Activite[] {
   return useRouteLoaderData<Activite[]>(projetRouteId) ?? []
+}
+
+// Positions needed by each type of element, as in the element schema of @pnm/shared
+export const minPositions: Record<Element['type'], number> = {lieux: 1, parcours: 2, zone: 3}
+
+// A new element starts with no distance around it: the porteur de projet sets it afterwards
+export function createElement(
+  type: Element['type'],
+  positions: readonly Position[],
+  isBoucle: boolean,
+): Element | undefined {
+  if (positions.length < minPositions[type]) {
+    return undefined
+  }
+
+  const id = crypto.randomUUID()
+
+  switch (type) {
+    case 'lieux': {
+      return {
+        id, type, positions: [...positions], rayon: 0,
+      }
+    }
+
+    case 'parcours': {
+      return {
+        id, type, positions: [...positions], boucle: isBoucle, largeur: 0,
+      }
+    }
+
+    case 'zone': {
+      return {
+        id, type, positions: [...positions], marge: 0,
+      }
+    }
+  }
 }
 
 // Undefined until the porteur de projet has chosen one in this parc

@@ -14,6 +14,13 @@ const xoConfig = [
     },
   },
   {
+    // GeoJSON is a format, not a package: its types have no runtime counterpart
+    files: ['apps/web/package.json'],
+    rules: {
+      'package-json/no-orphan-types': 'off',
+    },
+  },
+  {
     // No public URL or sharing image yet
     files: ['**/*.html'],
     rules: {
