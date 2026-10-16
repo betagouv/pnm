@@ -12,13 +12,13 @@ import {PageLayout} from './components/page-layout.tsx'
 import {ActiviteStepPage} from './pages/activite-step-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
 import {HomePage} from './pages/home-page.tsx'
-import {LocalisationStepPage} from './pages/localisation-step-page.tsx'
 import {MesuresStepPage} from './pages/mesures-step-page.tsx'
 import {NotFoundPage} from './pages/not-found-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
 import {ProjetLayout} from './pages/projet-layout.tsx'
 import {
   fetchParcs,
+  fetchPerimetre,
   parcPath,
   parcRouteId,
   parcsRouteId,
@@ -83,7 +83,17 @@ export const router = createBrowserRouter([
                 children: [
                   {index: true, loader: ({params}) => redirect(projetStepPath(params.parcId!, 'activite'))},
                   {path: 'activite', Component: ActiviteStepPage},
-                  {path: 'localisation', Component: LocalisationStepPage},
+                  {
+                    path: 'localisation',
+                    loader: async ({params}) => fetchPerimetre(params.parcId!),
+                    // MapLibre is heavy: only this step loads it
+                    lazy: {
+                      async Component() {
+                        const {LocalisationStepPage} = await import('./pages/localisation-step-page.tsx')
+                        return LocalisationStepPage
+                      },
+                    },
+                  },
                   {path: 'mesures', Component: MesuresStepPage},
                 ],
               },
