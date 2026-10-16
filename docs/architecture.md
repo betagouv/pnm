@@ -9,6 +9,8 @@
   séparés dans le code.
 - **Traitements de données** : ils préparent des référentiels et les publient sur un stockage S3.
   L'application lit ces référentiels.
+- **Cartographie** : MapLibre GL JS. Le fond est la photographie aérienne de l'IGN, servie par la
+  Géoplateforme. Un fond vectoriel OpenFreeMap est envisagé.
 
 | Besoin | Outil |
 | --- | --- |
@@ -44,11 +46,14 @@ et, en développement, le middleware Vite.
   visite.
 - L'adresse désigne une page, elle ne stocke pas d'état. Ce que saisit le porteur de projet est
   gardé dans le navigateur (`localStorage`), en attendant un stockage en base.
+- MapLibre est lourd : seule la page qui affiche une carte le charge.
 
 ### API (`apps/api/src`)
 
 - Les données servies viennent de fichiers JSON, validés par Zod au démarrage. Une donnée mal
   formée empêche le serveur de démarrer plutôt que d'arriver aux utilisateurs.
+- `scripts/` : les scripts qui récupèrent des données à leur source et les préparent pour l'API.
+  Leur résultat est versionné, et on les relance quand la source change.
 
 ### Code partagé (`packages/shared`)
 
@@ -90,4 +95,3 @@ et, en développement, le middleware Vite.
 ## Questions ouvertes
 
 - **Format des référentiels sur S3** : à définir.
-- **Cartographie** : MapLibre GL JS, fonds de carte à définir.

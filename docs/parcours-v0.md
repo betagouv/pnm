@@ -90,14 +90,56 @@ La maquette reste indicative. Son titre « Cap projet » n'est pas repris : la p
 
 ### 2. Localisation du projet
 
-Squelette : l'étape rappelle l'activité choisie et annonce la carte.
+Sans localisation, on ne peut pas remonter les recommandations : elle est obligatoire. Continuer
+sans rien sur la carte affiche une erreur.
 
-- Le composant de la maquette, basé sur Leaflet, n'est pas retenu : on fera mieux.
+Un projet peut réunir plusieurs éléments, par exemple une série de mouillages et un circuit de
+course :
+
+- **des lieux**, une série de points (mouillages, stations de prélèvement…), avec un rayon
+  autour de chacun ;
+- **un parcours**, ouvert ou en boucle (circuit de course, randonnée nautique…), avec la largeur
+  de son couloir. L'intérieur d'une boucle n'en fait pas partie : si l'intérieur compte, c'est une
+  zone ;
+- **une zone**, donnée par ses angles, avec une marge autour.
+
+Chaque élément garde ce que le porteur a dessiné et sa distance, pas la surface calculée. La
+marge d'une zone s'étend vers l'extérieur, la largeur d'un couloir se répartit de part et d'autre
+du parcours. La carte calcule la surface couverte (`@turf/buffer`) pour l'afficher.
+
+L'interface vise à rester intelligible pour un néophyte :
+
+- les commandes sont des boutons DSFR hors de la carte, pas une barre d'outils posée dessus ;
+- pendant le dessin, une consigne dit quoi faire ; « Terminer », « Annuler le dernier point » et
+  « Abandonner » sont des boutons visibles. Finir sur le premier point boucle un parcours ou
+  ferme une zone, avec plus de tolérance au doigt qu'à la souris ;
+- rien ne bouge au-dessus de la carte pendant le dessin : la consigne est fixe et les boutons
+  sont là dès le début, désactivés tant qu'ils ne servent pas. Sur mobile, où ils s'empilent, un
+  bouton qui apparaîtrait décalerait la carte sous le doigt ;
+- la carte s'ouvre sur le projet s'il en a déjà, sinon sur tout le parc ; « Zoomer sur le
+  projet » y revient ;
+- une liste à côté de la carte dit en mots ce qu'elle montre (« Boucle de 4,2 km ») et règle la
+  distance de chaque élément, affichée en direct sur la carte.
+
+La carte affiche la photographie aérienne de l'IGN et le périmètre du parc. Les périmètres des 8
+parcs viennent du WFS de l'OFB (couche des aires marines protégées, `wxs.ofb.fr`), simplifiés à
+20 m près pour l'affichage. Licence : **à confirmer**. Pour les mettre à jour :
+`npm run perimetres -w @pnm/api`.
+
+À venir :
+
+- **saisie de coordonnées**, nécessaire pour l'accessibilité (RGAA) : un dessin à la souris ne
+  s'utilise pas au clavier ;
+- **import de fichiers** : GPX, KML, GeoJSON, Shapefile ;
+- **modification** d'un élément déjà dessiné ;
+- **distances par défaut et limites** selon l'activité, fournies avec les données ;
+- **« Situé dans… »** : croisement avec les zonages, fournis avec les données ;
+- **recherche d'un lieu** (port, plage…) et fond vectoriel OpenFreeMap.
 
 Questions ouvertes :
 
-- Quelles géométries le porteur peut-il saisir : point, tracé (ligne), emprise (polygone) ?
-- Quel fond de carte, quelle bibliothèque cartographique ?
+- Le parc a déjà un champ `localisation` (sa façade maritime, « Méditerranée »), homonyme de la
+  localisation du projet : à renommer ?
 - Quelles autres informations décrivent le projet ?
 
 ### 3. Mesures à prendre
