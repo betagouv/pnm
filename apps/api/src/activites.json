@@ -1,0 +1,14 @@
+[
+  {
+    "id": "manifestation-nautique",
+    "nom": "Manifestation nautique",
+    "description": "Régate, course, randonnée nautique, fête de la mer…",
+    "pictogramme": "institutions/navy-anchor"
+  },
+  {
+    "id": "etude-scientifique",
+    "nom": "Étude scientifique",
+    "description": "Inventaire, suivi, prélèvement, pose d'instruments…",
+    "pictogramme": "health/medical-research"
+  }
+]

@@ -7,9 +7,10 @@
 1. **Accueil.** La page explique à quoi sert le service et présente les grandes étapes. Un
    bouton « Préparer mon projet » s'adresse aux porteurs de projet.
 2. **Préparer mon projet.** Le porteur choisit d'abord le parc naturel marin concerné.
-3. **Parcours guidé** dans le parc choisi, en plusieurs étapes :
-   1. **Définir son projet** : type d'activité, localisation ou tracé cartographique…
-   2. Étapes suivantes : à définir.
+3. **Parcours guidé** dans le parc choisi, en trois étapes :
+   1. **Votre activité** ;
+   2. **Localisation du projet** ;
+   3. **Mesures à prendre**.
 
 ## Accueil
 
@@ -57,11 +58,41 @@ Le parc choisi est porté par l'adresse : `/parcs/<parc>/<section>`, par exemple
 d'en changer en restant dans la même section. Les futures sections (actualités, carte
 interactive) conserveront ainsi le parc choisi.
 
-## Définir son projet
+## Le parcours en trois étapes
 
-- **Type d'activité.** Le référentiel des activités de POOLPE (OFB) est une piste, mais incomplet.
-- **Localisation ou tracé cartographique.** Le composant de la maquette, basé sur Leaflet, n'est
-  pas retenu : on fera mieux.
+Chaque étape a sa propre adresse : `/parcs/<parc>/preparer-mon-projet/<étape>`, avec
+`activite`, `localisation` et `mesures`. Un bandeau commun rappelle le parc et porte
+l'indicateur d'étapes du DSFR. En bas de page, « Retour » et « Continuer » passent d'une étape à
+l'autre. La page ne saute pas en haut : l'indicateur d'étapes revient dans l'écran en douceur s'il
+en était sorti, et son titre prend le focus pour que les lecteurs d'écran annoncent l'étape.
+
+Le projet en cours est gardé dans le navigateur (`localStorage`) : un seul projet par
+navigateur, rattaché à son parc. Il survit à un rechargement et se retrouve en revenant sur le
+site. Sans activité choisie dans ce parc, les étapes 2 et 3 renvoient à l'étape 1.
+
+Plus tard, le projet sera stocké en base, avec un identifiant et une clé : le navigateur ne
+gardera que ces deux valeurs.
+
+La maquette reste indicative. Son titre « Cap projet » n'est pas repris : la page garde
+« Préparer mon projet », comme la navigation.
+
+### 1. Votre activité
+
+- Le porteur choisit une activité parmi des boutons radio riches du DSFR, avec pictogramme. La
+  maquette montrait des tuiles, mais les tuiles DSFR servent à naviguer et n'ont pas d'état
+  sélectionné. Continuer sans choix affiche une erreur sur le groupe de boutons.
+- Activités proposées, reprises de la maquette : « Manifestation nautique » et « Étude
+  scientifique ». Liste et descriptions **à confirmer**.
+- **Ajouter une activité** : une entrée dans `apps/api/src/activites.json`, pictogramme compris.
+  Le pictogramme est désigné par sa catégorie et son nom dans le DSFR, par exemple
+  `institutions/navy-anchor`. Un nom inconnu du DSFR laisse sa place vide.
+- Le référentiel des activités de POOLPE (OFB) est une piste, mais incomplet.
+
+### 2. Localisation du projet
+
+Squelette : l'étape rappelle l'activité choisie et annonce la carte.
+
+- Le composant de la maquette, basé sur Leaflet, n'est pas retenu : on fera mieux.
 
 Questions ouvertes :
 
@@ -69,6 +100,9 @@ Questions ouvertes :
 - Quel fond de carte, quelle bibliothèque cartographique ?
 - Quelles autres informations décrivent le projet ?
 
-## Suite du parcours
+### 3. Mesures à prendre
 
-À définir.
+Squelette : l'étape rappelle l'activité choisie et annonce les mesures.
+
+La maquette y montre les mesures concrètes à prendre, des projets similaires et des guides de
+bonnes pratiques, et un encart « Besoin d'un accompagnement ? ». Contenus et sources à définir.

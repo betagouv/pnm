@@ -9,17 +9,21 @@ import {
 } from 'react-router'
 import {AppLayout} from './app-layout.tsx'
 import {PageLayout} from './components/page-layout.tsx'
+import {ActiviteStepPage} from './pages/activite-step-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
 import {HomePage} from './pages/home-page.tsx'
+import {LocalisationStepPage} from './pages/localisation-step-page.tsx'
+import {MesuresStepPage} from './pages/mesures-step-page.tsx'
 import {NotFoundPage} from './pages/not-found-page.tsx'
-import {ParcPreparerProjetPage} from './pages/parc-preparer-projet-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
+import {ProjetLayout} from './pages/projet-layout.tsx'
 import {
   fetchParcs,
   parcPath,
   parcRouteId,
   parcsRouteId,
 } from './parcs.ts'
+import {fetchActivites, projetRouteId, projetStepPath} from './projet.ts'
 
 async function loadParc({params}: LoaderFunctionArgs): Promise<Parc> {
   const parcs = await fetchParcs()
@@ -71,7 +75,18 @@ export const router = createBrowserRouter([
             loader: loadParc,
             children: [
               {index: true, loader: ({params}) => redirect(parcPath(params.parcId!))},
-              {path: 'preparer-mon-projet', Component: ParcPreparerProjetPage},
+              {
+                id: projetRouteId,
+                path: 'preparer-mon-projet',
+                loader: fetchActivites,
+                Component: ProjetLayout,
+                children: [
+                  {index: true, loader: ({params}) => redirect(projetStepPath(params.parcId!, 'activite'))},
+                  {path: 'activite', Component: ActiviteStepPage},
+                  {path: 'localisation', Component: LocalisationStepPage},
+                  {path: 'mesures', Component: MesuresStepPage},
+                ],
+              },
             ],
           },
           {path: '*', Component: NotFoundPage},

@@ -1,4 +1,5 @@
 import express from 'express'
+import {createActivitesRouter} from './activites.ts'
 import {createParcsRouter} from './parcs.ts'
 
 export function createApiRouter(): express.Router {
@@ -8,6 +9,7 @@ export function createApiRouter(): express.Router {
     response.json({status: 'ok'})
   })
 
+  router.use('/activites', createActivitesRouter())
   router.use('/parcs', createParcsRouter())
 
   // Unknown API routes must not fall through to the front

@@ -35,21 +35,25 @@ et, en développement, le middleware Vite.
 
 ### Front (`apps/web/src`)
 
-- `components/` : composants UI, pilotés par leurs props (`PageLayout`, `ParcTiles`).
-- `pages/` et `app-layout.tsx` : composants de haut niveau, qui lisent les données et l'adresse.
-- `router.tsx` : les routes, avec React Router en mode données. Les loaders chargent les parcs
-  depuis l'API avant d'afficher une page, et un parc inconnu donne une page 404.
-- `parcs.ts` : l'appel à `/api/parcs` et la construction des chemins.
+- `components/` : les composants UI, de la présentation pure, pilotés par leurs props.
+- `pages/` : les composants de haut niveau. Ils lisent les données et l'adresse, et les passent
+  aux composants UI.
+- Les routes utilisent React Router en mode données : les loaders chargent depuis l'API avant
+  d'afficher une page, et une ressource inconnue donne une page 404.
+- Les appels à l'API passent par un même point, qui ne demande chaque adresse qu'une fois par
+  visite.
+- L'adresse désigne une page, elle ne stocke pas d'état. Ce que saisit le porteur de projet est
+  gardé dans le navigateur (`localStorage`), en attendant un stockage en base.
 
 ### API (`apps/api/src`)
 
-- `GET /api/parcs` : la liste des parcs, lue dans `parcs.json` et validée par Zod au démarrage.
-  Une donnée mal formée empêche le serveur de démarrer plutôt que d'arriver aux utilisateurs.
+- Les données servies viennent de fichiers JSON, validés par Zod au démarrage. Une donnée mal
+  formée empêche le serveur de démarrer plutôt que d'arriver aux utilisateurs.
 
 ### Code partagé (`packages/shared`)
 
 - Un type n'est déclaré qu'une fois. Ce qui sert à l'API et au front vit ici, sous forme de schéma
-  Zod dont on déduit le type (`Parc`, `parcSchema`, `parcsSchema`).
+  Zod dont on déduit le type.
 - L'API valide ses données avec les schémas. Le front n'importe que les types (`import type`) :
   Zod n'entre pas dans son bundle.
 - Ce code ne dépend ni de Node.js ni du navigateur.
