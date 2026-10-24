@@ -8,7 +8,8 @@
 - **Un seul processus web** : il sert l'API et les fichiers buildés du front. API et front sont
   séparés dans le code.
 - **Traitements de données** : ils préparent des référentiels et les publient sur un stockage S3.
-  L'application lit ces référentiels.
+  L'application lit ces référentiels. Les données sont récupérées brutes à leur source, puis
+  transformées de notre côté.
 - **Cartographie** : MapLibre GL JS. Le fond est la photographie aérienne de l'IGN, servie par la
   Géoplateforme. Un fond vectoriel OpenFreeMap est envisagé.
 
@@ -28,6 +29,7 @@ apps/
   server/     @pnm/server  processus web unique : monte l'API sous /api, sert le front
 packages/
   shared/     @pnm/shared  schémas Zod et types partagés entre l'API et le front
+  wfs/        @pnm/wfs     récupération complète d'une couche WFS, telle qu'elle est sur le serveur
 docs/
 ```
 
@@ -63,6 +65,18 @@ et, en développement, le middleware Vite.
   Zod n'entre pas dans son bundle.
 - Ce code ne dépend ni de Node.js ni du navigateur.
 
+### Récupération des données (`packages/wfs`)
+
+- Une couche est téléchargée telle qu'elle est sur le serveur : ni filtre, ni reprojection. La
+  sélection, l'agrégation et la fusion se font ensuite, de notre côté.
+- L'exhaustivité est contrôlée : le nombre d'objets annoncé par le serveur, celui de chaque page,
+  puis le total. Le serveur ne garantit pas la cohérence d'une page à l'autre : les pages sont
+  triées sur la clé de la couche, et une couche dont le nombre d'objets change pendant le
+  téléchargement est rejetée.
+- Les pages sont téléchargées en parallèle, compressées, et écrites sur disque au fil de l'eau.
+  Une page qui échoue est retentée seule ; une requête refusée pour ce qu'elle demande ne l'est
+  pas.
+
 À venir : `pipelines/` pour les traitements de préparation des référentiels.
 
 ## Exécution
@@ -95,3 +109,4 @@ et, en développement, le middleware Vite.
 ## Questions ouvertes
 
 - **Format des référentiels sur S3** : à définir.
+- **Requêtes simultanées sur le GeoServer de l'OFB** : combien en accepter ? 4 par défaut.
