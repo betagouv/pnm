@@ -31,6 +31,7 @@ apps/
 packages/
   shared/     @pnm/shared  schémas Zod et types partagés entre l'API et le front
   wfs/        @pnm/wfs     récupération complète d'une couche WFS, telle qu'elle est sur le serveur
+  grist/      @pnm/grist   lecture d'un document Grist tel qu'il est, écriture à la demande
 pipelines/    @pnm/pipelines  chaîne de traitement locale : récupère les sources, prépare les référentiels
 docs/
 ```
@@ -78,6 +79,18 @@ et, en développement, le middleware Vite.
 - Les pages sont téléchargées en parallèle, compressées, et écrites sur disque au fil de l'eau.
   Une page qui échoue est retentée seule ; une requête refusée pour ce qu'elle demande ne l'est
   pas.
+
+### Documents Grist (`packages/grist`)
+
+- Un document est lu tel qu'il est : ses tables, leurs colonnes et leurs lignes. Les valeurs
+  restent encodées comme Grist les stocke ; on les décode ensuite d'après le type des colonnes.
+- On n'écrit dans un document qu'à la demande explicite de la personne qui en a la charge, jamais
+  dans un traitement automatique.
+- Une écriture qui ne se rejoue pas sans effet (un ajout, une suppression) n'est retentée que si
+  Grist l'a refusée sans l'exécuter. Les valeurs sont écrites telles quelles : Grist n'interprète
+  les chaînes selon le type de la colonne que si on le demande.
+- L'accès passe par une clé d'API personnelle, qui porte tous les droits de son propriétaire.
+  Elle reste hors du dépôt, par exemple dans `.env`, ignoré par git.
 
 ### Chaîne de traitement (`pipelines/`)
 
