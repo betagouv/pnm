@@ -5,6 +5,7 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 
 | Terme | Dans le code | Définition |
 | --- | --- | --- |
+| Aire marine protégée (AMP) | `aireMarineProtegee` | Espace protégé en mer. Les parcs naturels marins, les sites Natura 2000 en mer et les réserves naturelles en font partie. |
 | Parc naturel marin (PNM) | `parc` | Aire marine protégée gérée par l'OFB. On en compte 8. |
 | Porteur de projet | `porteurProjet` | Personne ou structure qui envisage un projet dans un parc naturel marin. |
 | Projet | `projet` | Ce que le porteur décrit dans le parcours : type d'activité, localisation… |

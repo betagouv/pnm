@@ -7,9 +7,10 @@
 - **Front** : React, Vite, TypeScript, DSFR.
 - **Un seul processus web** : il sert l'API et les fichiers buildés du front. API et front sont
   séparés dans le code.
-- **Traitements de données** : ils préparent des référentiels et les publient sur un stockage S3.
-  L'application lit ces référentiels. Les données sont récupérées brutes à leur source, puis
-  transformées de notre côté.
+- **Traitements de données** : une chaîne locale récupère les données brutes à leur source, les
+  transforme de notre côté et prépare des référentiels, publiés sur un stockage S3.
+- **Formats de travail** : DuckDB/Parquet et PMTiles, stockés sur S3 et lus en HTTP. En
+  production, l'application lira les référentiels avec DuckDB pour Node.js (neo).
 - **Cartographie** : MapLibre GL JS. Le fond est la photographie aérienne de l'IGN, servie par la
   Géoplateforme. Un fond vectoriel OpenFreeMap est envisagé.
 
@@ -30,6 +31,7 @@ apps/
 packages/
   shared/     @pnm/shared  schémas Zod et types partagés entre l'API et le front
   wfs/        @pnm/wfs     récupération complète d'une couche WFS, telle qu'elle est sur le serveur
+pipelines/    @pnm/pipelines  chaîne de traitement locale : récupère les sources, prépare les référentiels
 docs/
 ```
 
@@ -54,8 +56,8 @@ et, en développement, le middleware Vite.
 
 - Les données servies viennent de fichiers JSON, validés par Zod au démarrage. Une donnée mal
   formée empêche le serveur de démarrer plutôt que d'arriver aux utilisateurs.
-- `scripts/` : les scripts qui récupèrent des données à leur source et les préparent pour l'API.
-  Leur résultat est versionné, et on les relance quand la source change.
+- Une donnée préparée par la chaîne de traitement est copiée dans l'API par une commande de
+  l'API, et versionnée. La chaîne n'écrit pas dans l'application.
 
 ### Code partagé (`packages/shared`)
 
@@ -77,13 +79,25 @@ et, en développement, le middleware Vite.
   Une page qui échoue est retentée seule ; une requête refusée pour ce qu'elle demande ne l'est
   pas.
 
-À venir : `pipelines/` pour les traitements de préparation des référentiels.
+### Chaîne de traitement (`pipelines/`)
+
+- Elle tourne en local, jamais en production : ses dépendances sont des dépendances de
+  développement.
+- Ses données sont dans `data/`, à la racine, ignoré par git et sans code : `raw/` garde les
+  sources telles que téléchargées, avec la date et le nombre d'objets ; `dist/` reçoit ce que la
+  chaîne produit. Un nouveau téléchargement ne remplace l'ancien qu'une fois complet.
+- Chaque source décrit sa clé et la projection de ses coordonnées. Au chargement, la chaîne
+  vérifie le nombre d'objets, et que la clé est unique et toujours remplie.
+- Les transformations se font dans DuckDB, avec son extension spatiale : le même moteur qu'en
+  production.
+- Une reprojection passe toujours par PROJ (`ST_Transform`), jamais par une formule écrite à la
+  main.
 
 ## Exécution
 
-- Node.js ≥ 24 exécute directement le TypeScript du serveur et de l'API (suppression des types,
-  sans étape de build). Le code doit donc s'en tenir à la syntaxe effaçable : pas d'`enum`, pas de
-  `namespace`, imports relatifs avec l'extension `.ts`.
+- Node.js ≥ 24 exécute directement le TypeScript du serveur, de l'API et de la chaîne de
+  traitement (suppression des types, sans étape de build). Le code doit donc s'en tenir à la
+  syntaxe effaçable : pas d'`enum`, pas de `namespace`, imports relatifs avec l'extension `.ts`.
 - **Développement** : un seul processus. Vite tourne en mode middleware dans Express (`npm run
   dev`), avec rechargement à chaud du front et redémarrage du serveur quand l'API change.
 - **Production** : `npm run build` produit le front dans `apps/web/dist`, puis `npm start` sert
@@ -108,5 +122,4 @@ et, en développement, le middleware Vite.
 
 ## Questions ouvertes
 
-- **Format des référentiels sur S3** : à définir.
 - **Requêtes simultanées sur le GeoServer de l'OFB** : combien en accepter ? 4 par défaut.
