@@ -16,6 +16,7 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Zone | `zone` | Surface d'un projet, donnée par ses angles, avec une marge autour. |
 | Périmètre | `perimetre` | Limite officielle d'un parc naturel marin. |
 | Pression | `pression` | Effet qu'une activité exerce sur le milieu marin. |
+| Plan de gestion | `planGestion` | Document qui fixe les objectifs de gestion d'un parc naturel marin. |
 | Habitat | `habitat` | Habitat marin, identifié par `cdhab` (référentiel HABREF). |
 | Espèce | `espece` | Espèce, identifiée par `cdnom` (référentiel TAXREF). |
 | Mesure ERC | `mesureErc` | Mesure pour Éviter, Réduire ou Compenser un impact. |

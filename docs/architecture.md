@@ -99,6 +99,9 @@ et, en développement, le middleware Vite.
 - Ses données sont dans `data/`, à la racine, ignoré par git et sans code : `raw/` garde les
   sources telles que téléchargées, avec la date et le nombre d'objets ; `dist/` reçoit ce que la
   chaîne produit. Un nouveau téléchargement ne remplace l'ancien qu'une fois complet.
+- Le téléchargement ne transforme rien : il stocke la donnée brute. Toute transformation produit
+  une donnée dérivée, à partir de `raw/`, et se régénère quand on veut, sans le serveur : on
+  améliore les traitements sans dépendre de lui.
 - Chaque source décrit sa clé et la projection de ses coordonnées. Au chargement, la chaîne
   vérifie le nombre d'objets, et que la clé est unique et toujours remplie.
 - Les transformations se font dans DuckDB, avec son extension spatiale : le même moteur qu'en
