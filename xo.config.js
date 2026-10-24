@@ -5,7 +5,7 @@ const xoConfig = [
   },
   {
     // These rules target published packages, not npm workspaces
-    files: ['apps/*/package.json', 'packages/*/package.json'],
+    files: ['apps/*/package.json', 'packages/*/package.json', 'pipelines/package.json'],
     rules: {
       'package-json/no-nested-exports': 'off',
       'package-json/no-wildcard-dependencies': 'off',
