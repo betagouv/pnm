@@ -16,3 +16,6 @@ coverage/
 
 # Local review pages (staged-review)
 .review/
+
+# Data of the processing chain: downloaded sources and produced référentiels
+data/

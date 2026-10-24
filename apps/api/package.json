@@ -6,7 +6,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "perimetres": "node scripts/fetch-perimetres.ts",
+    "perimetres": "cp ../../data/dist/perimetres.json src/perimetres.json",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -14,7 +14,6 @@
     "express": "^5.3.0"
   },
   "devDependencies": {
-    "@turf/simplify": "^7.4.0",
     "@types/express": "^5.0.6"
   }
 }

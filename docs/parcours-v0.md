@@ -123,8 +123,14 @@ L'interface vise à rester intelligible pour un néophyte :
 
 La carte affiche la photographie aérienne de l'IGN et le périmètre du parc. Les périmètres des 8
 parcs viennent du WFS de l'OFB (couche des aires marines protégées, `wxs.ofb.fr`), simplifiés à
-20 m près pour l'affichage. Licence : **à confirmer**. Pour les mettre à jour :
-`npm run perimetres -w @pnm/api`.
+20 m près pour l'affichage. Ils sont préparés par la chaîne de traitement, puis copiés dans
+l'API :
+
+```bash
+npm run download -w @pnm/pipelines      # récupère les sources
+npm run perimetres -w @pnm/pipelines    # prépare les périmètres
+npm run perimetres -w @pnm/api          # les copie dans l'API
+```
 
 À venir :
 
