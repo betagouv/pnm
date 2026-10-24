@@ -89,6 +89,8 @@ et, en développement, le middleware Vite.
 - Une écriture qui ne se rejoue pas sans effet (un ajout, une suppression) n'est retentée que si
   Grist l'a refusée sans l'exécuter. Les valeurs sont écrites telles quelles : Grist n'interprète
   les chaînes selon le type de la colonne que si on le demande.
+- Une lecture est aussi retentée quand l'instance ne trouve plus le serveur qui porte le document
+  (404 « document worker not present ») : Grist lui-même en essaie alors un autre.
 - L'accès passe par une clé d'API personnelle, qui porte tous les droits de son propriétaire.
   Elle reste hors du dépôt, par exemple dans `.env`, ignoré par git.
 

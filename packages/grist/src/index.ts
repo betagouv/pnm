@@ -72,9 +72,15 @@ type Request = {
   readonly isIdempotent: boolean
 }
 
+// What the load balancer of a Grist instance answers when the server holding the document is gone.
+// Grist itself takes it for a missing server and tries another one
+function isWorkerMissing(error: HttpError): boolean {
+  return error.status === 404 && error.message.includes('document worker not present')
+}
+
 function isRetryable(error: unknown, isIdempotent: boolean): boolean {
   return error instanceof HttpError
-    ? error.status === 429 || (isIdempotent && error.status >= 500)
+    ? error.status === 429 || (isIdempotent && (error.status >= 500 || isWorkerMissing(error)))
     : isIdempotent
 }
 
