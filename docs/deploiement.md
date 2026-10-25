@@ -14,6 +14,8 @@ bucket S3 de Scaleway, que l'API et le navigateur lisent en HTTPS.
   l'Active LTS (24 au 15 octobre 2026) et signale la plage large dans les logs de build.
 - Le serveur ne démarre pas sans ses données : un déploiement dont les données manquent échoue,
   et la version en ligne reste en place.
+- DuckDB télécharge ses extensions (spatial, httpfs) au démarrage, avec les surfaces des habitats :
+  un échec empêche aussi le déploiement.
 
 Variables d'environnement :
 

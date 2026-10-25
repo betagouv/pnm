@@ -1,6 +1,7 @@
 // Reading the data produced by the processing chain, at an address: a local folder (file:) or an S3
 // folder over HTTPS. A reading goes through a promise: the data need not all stay in memory
 import {readFile, stat} from 'node:fs/promises'
+import {fileURLToPath} from 'node:url'
 
 // Loads once, when first needed, and keeps the result. A load that fails is tried again the next
 // time
@@ -87,4 +88,9 @@ export async function isPresent(url: URL): Promise<boolean> {
   }
 
   return true
+}
+
+// An address as DuckDB reads it: a path for a local file
+export function duckdbLocation(url: URL): string {
+  return url.protocol === 'file:' ? fileURLToPath(url) : url.href
 }

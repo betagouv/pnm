@@ -1,5 +1,6 @@
 export * from './activites.ts'
 export * from './config.ts'
+export * from './croisement.ts'
 export * from './geometries.ts'
 export * from './habitats.ts'
 export * from './parcs.ts'

@@ -6,7 +6,7 @@ import {parcSchema} from './parcs.ts'
 // In meters
 const distanceSchema = z.number().int().min(0)
 
-const elementIdSchema = z.string().min(1)
+export const elementIdSchema = z.string().min(1)
 
 // One part of the localisation of a projet. Each part keeps what the porteur de projet drew and
 // the distance around it, not the area computed from them
