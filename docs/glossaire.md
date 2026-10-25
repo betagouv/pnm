@@ -17,7 +17,7 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Périmètre | `perimetre` | Limite officielle d'un parc naturel marin. |
 | Pression | `pression` | Effet qu'une activité exerce sur le milieu marin. |
 | Plan de gestion | `planGestion` | Document qui fixe les objectifs de gestion d'un parc naturel marin. |
-| Habitat | `habitat` | Habitat marin, identifié par `cdhab` (référentiel HABREF). |
+| Habitat | `habitat` | Habitat élémentaire du plan de gestion d'un parc, identifié par son code habitat élémentaire : `1120-1` pour les herbiers à posidonie. |
 | Espèce | `espece` | Espèce, identifiée par `cdnom` (référentiel TAXREF). |
 | Mesure ERC | `mesureErc` | Mesure pour Éviter, Réduire ou Compenser un impact. |
 | Référentiel | `referentiel` | Jeu de données de référence préparé par les traitements et publié sur S3. |

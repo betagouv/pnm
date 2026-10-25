@@ -124,6 +124,15 @@ et, en développement, le middleware Vite.
   règles et, s'il le faut, son traitement propre. Une étape ne fait qu'orchestrer.
 - Une reprojection passe toujours par PROJ (`ST_Transform`), jamais par une formule écrite à la
   main.
+- Ce qu'on fait des sources reste dans le dépôt : quelles couches, quels objets, à quel habitat
+  on les rattache, avec quel tampon. Un document Grist ne fournit que du contenu métier, comme les
+  habitats d'un plan de gestion.
+- Une couche est traitée entière, jamais découpée à un parc : ce que la chaîne produit peut servir
+  à d'autres usages que les nôtres.
+- Le tampon redresse une couche, pour le rendu comme pour le croisement : des miettes, des éclats
+  et des points deviennent des surfaces qui représentent un habitat, fusionnées quand elles se
+  touchent. La tolérance autour d'un projet n'est pas ce tampon : elle élargit le projet, au moment
+  du croisement.
 
 ## Exécution
 
