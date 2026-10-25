@@ -7,9 +7,11 @@ import {
   mkdir,
   rm,
   stat,
+  writeFile,
 } from 'node:fs/promises'
 import {join} from 'node:path'
 import {fileURLToPath} from 'node:url'
+import type {Cartographie} from '@pnm/shared'
 import {readGristTable, text} from '../lib/grist.ts'
 import {connectForLayers, processLayer} from '../lib/layer.ts'
 import {publish} from '../lib/publish.ts'
@@ -69,7 +71,16 @@ await publish(connection, {
   pieces, parquet, pmtiles, tileLayer: 'habitats', workDir: runDir,
 })
 
-const files = [parquet, pmtiles]
+// The habitats that the surfaces cover, and the layers they come from. What the plan de gestion
+// says of them is the plan-gestion step's
+const contents = join(distDir, 'habitats.json')
+const cartographies: Cartographie[] = [...new Set(rules.map(rule => rule.habitat))].toSorted().map(code => ({
+  code,
+  layers: habitatLayers.filter(layer => layer.rules.some(rule => rule.habitat === code)).map(layer => layer.source.typeName),
+}))
+await writeFile(contents, JSON.stringify(cartographies, undefined, 2) + '\n')
+
+const files = [parquet, pmtiles, contents]
 const stats = await Promise.all(files.map(async file => stat(file)))
 
 for (const [index, {size}] of stats.entries()) {

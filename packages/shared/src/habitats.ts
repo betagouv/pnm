@@ -28,5 +28,15 @@ export const habitatSchema = z.object({
   recommandations: z.array(recommandationSchema),
 })
 
+// The habitats that the surfaces produced by the processing chain cover, and the layers they come
+// from
+export const cartographieSchema = z.object({
+  code: habitatSchema.shape.code,
+  layers: z.array(z.string().min(1)).min(1),
+})
+
+export const cartographiesSchema = z.array(cartographieSchema)
+
 export type Recommandation = z.infer<typeof recommandationSchema>
 export type Habitat = z.infer<typeof habitatSchema>
+export type Cartographie = z.infer<typeof cartographieSchema>
