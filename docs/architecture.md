@@ -37,6 +37,8 @@ docs/
 ```
 
 Seul `@pnm/server` dépend à la fois de l'API et du front. C'est ce qui garde les deux séparés.
+Sans `DATA_URL`, l'API lit les données de la chaîne dans `data/dist/`, que le serveur sert aussi
+en fichiers au navigateur, sous `/data/`, comme le fait le bucket S3 en production.
 `@pnm/web` expose dans `serve.ts` ce dont le serveur a besoin pour le servir : le dossier du build
 et, en développement, le middleware Vite.
 
@@ -51,14 +53,32 @@ et, en développement, le middleware Vite.
   visite.
 - L'adresse désigne une page, elle ne stocke pas d'état. Ce que saisit le porteur de projet est
   gardé dans le navigateur (`localStorage`), en attendant un stockage en base.
-- MapLibre est lourd : seule la page qui affiche une carte le charge.
+- MapLibre est lourd : seules les pages qui affichent une carte le chargent. Les cartes partagent
+  le fond, le périmètre et le dessin du projet.
+- Les surfaces des habitats s'affichent depuis leurs PMTiles, lus par le protocole `pmtiles` de
+  MapLibre, à l'adresse que donne `GET /api/config`.
 
 ### API (`apps/api/src`)
 
-- Les données servies viennent de fichiers JSON, validés par Zod au démarrage. Une donnée mal
-  formée empêche le serveur de démarrer plutôt que d'arriver aux utilisateurs.
-- Une donnée préparée par la chaîne de traitement est copiée dans l'API par une commande de
-  l'API, et versionnée. La chaîne n'écrit pas dans l'application.
+- Les données n'ont qu'un chemin : la chaîne de traitement les produit dans `data/dist/`, copié
+  tel quel dans le bucket S3 (voir [deploiement.md](deploiement.md)), et l'API les lit à l'adresse
+  que le serveur lui donne. Rien de ce que produit la chaîne n'est copié dans l'API.
+- Le dépôt ne garde des données que ce qui est lié au code : les couches géographiques à traiter
+  et leurs paramètres, qui se rattachent aux données de référence du plan de gestion (les codes
+  d'habitat).
+- Les parcs, les activités et les périmètres sont encore des fichiers JSON de l'API, versionnés et
+  validés par Zod au démarrage : un héritage, qui passera par ce même chemin.
+- Sans ses données, le serveur ne démarre pas : l'API vérifie au démarrage, avant que le serveur
+  n'écoute, que chacune est là et valide (les habitats et leurs PMTiles, le plan
+  de gestion de chaque parc ouvert). Un déploiement sans elles échoue, et la version en ligne
+  reste en place.
+- Les données se lisent pourtant par des promesses, au moment où une route en a besoin : on
+  pourra, avec tous les parcs, ne plus tout garder en mémoire.
+- **Plan de gestion** : `GET /api/parcs/<parc>/plan-de-gestion` sert tout le plan d'un parc
+  (enjeux et leur arbre d'objectifs, habitats, actions), d'un seul tenant : le front en tire toutes
+  ses pages. Un parc sans plan de gestion répond 404.
+- `GET /api/habitats` donne les habitats que couvrent les surfaces de la chaîne : la fiche d'un
+  habitat n'affiche de carte que pour eux.
 
 ### Code partagé (`packages/shared`)
 
@@ -157,20 +177,7 @@ et, en développement, le middleware Vite.
 - **DSFR** : intégré avec `@codegouvfr/react-dsfr`. Seules les icônes DSFR utilisées dans le code
   sont incluses (`react-dsfr update-icons`, lancé avant `dev` et `build`).
 
-## Intégration continue et déploiement
-
-- **GitHub Actions** (`.github/workflows/ci.yml`), sur chaque PR et sur `main` : lint, typecheck,
-  build, puis démarrage du serveur comme sur Scalingo et appel de `/api/health`.
-- **Scalingo**, avec le buildpack Node.js, sans configuration propre au projet :
-  - `npm ci`, dépendances de développement comprises, puis `npm run build` ;
-  - les dépendances de développement sont retirées à la fin du build : le serveur ne doit pas en
-    dépendre à l'exécution ;
-  - démarrage par `npm start` (le script `start`, faute de `Procfile`).
-- **Version de Node.js** : pour `engines.node` `>=24`, le buildpack Scalingo prend la dernière
-  version de l'Active LTS (24 au 15 octobre 2026) et signale la plage large dans les logs de build.
-  La CI suit la même règle (`lts/*`).
-- **Variables d'environnement** : aucune à définir. Scalingo fournit `PORT`, et `NODE_ENV` vaut
-  `production` par défaut.
+Le déploiement, Scalingo et les données sur Scaleway : [deploiement.md](deploiement.md).
 
 ## Questions ouvertes
 

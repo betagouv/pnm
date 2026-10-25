@@ -25,10 +25,14 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
 
+      # The server does not start without its data: it reads them from the S3 folder, as in
+      # production, and loads them before listening
       - name: Start the server as Scalingo does
+        env:
+          DATA_URL: ${{ vars.DATA_URL }}
         run: |
           npm start &
-          for i in $(seq 1 20); do
+          for i in $(seq 1 60); do
             curl -fs http://localhost:3000/api/health && exit 0
             sleep 1
           done
