@@ -69,16 +69,28 @@ et, en développement, le middleware Vite.
 - Les parcs, les activités et les périmètres sont encore des fichiers JSON de l'API, versionnés et
   validés par Zod au démarrage : un héritage, qui passera par ce même chemin.
 - Sans ses données, le serveur ne démarre pas : l'API vérifie au démarrage, avant que le serveur
-  n'écoute, que chacune est là et valide (les habitats et leurs PMTiles, le plan
+  n'écoute, que chacune est là et valide (les habitats, leurs surfaces et leurs PMTiles, le plan
   de gestion de chaque parc ouvert). Un déploiement sans elles échoue, et la version en ligne
   reste en place.
 - Les données se lisent pourtant par des promesses, au moment où une route en a besoin : on
   pourra, avec tous les parcs, ne plus tout garder en mémoire.
+- **Croisement** : une seule route, `POST /api/croisement`, reçoit le parc et la localisation d'un
+  projet et renvoie ce qu'elle rencontre, en chiffres et sans géométrie : la surface couverte par
+  le projet, et pour chaque habitat du plan de gestion du parc la part du projet qui s'y trouve, sa
+  distance et les éléments concernés. Les espèces et les zones de gouvernance s'y ajouteront.
 - **Plan de gestion** : `GET /api/parcs/<parc>/plan-de-gestion` sert tout le plan d'un parc
   (enjeux et leur arbre d'objectifs, habitats, actions), d'un seul tenant : le front en tire toutes
-  ses pages. Un parc sans plan de gestion répond 404.
+  ses pages. Un parc sans plan de gestion répond 404. Le croisement reprend le contenu de chaque
+  habitat.
 - `GET /api/habitats` donne les habitats que couvrent les surfaces de la chaîne : la fiche d'un
   habitat n'affiche de carte que pour eux.
+- Le croisement recalcule la surface de chaque élément comme la carte la dessine : le rayon d'un
+  lieu, la moitié de la largeur de part et d'autre d'un parcours, la marge d'une zone.
+- Surfaces et distances se calculent dans une projection azimutale équivalente de Lambert centrée
+  sur le projet : surfaces exactes, distances justes à l'échelle d'un projet, dans tous les parcs,
+  outre-mer compris.
+- La tolérance autour du projet est de 50 m (à confirmer) : un habitat à moins de 50 m est
+  signalé, avec sa distance, même si le projet ne l'atteint pas.
 
 ### Code partagé (`packages/shared`)
 

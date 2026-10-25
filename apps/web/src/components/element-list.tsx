@@ -12,7 +12,8 @@ type ElementListProps = {
 
 const numberFormat = new Intl.NumberFormat('fr-FR', {maximumFractionDigits: 1})
 
-function title(element: Element): string {
+// The element in words, as the porteur de projet sees it: "Boucle de 4,2 km"
+export function elementTitle(element: Element): string {
   switch (element.type) {
     case 'lieux': {
       const count = element.positions.length
@@ -77,10 +78,10 @@ export function ElementList({elements, onChange, onDelete}: ElementListProps) {
     <ul className='fr-raw-list'>
       {elements.map(element => {
         const {label, value, update} = distance(element)
-        const elementTitle = title(element)
+        const title = elementTitle(element)
         return (
           <li key={element.id} className='fr-mb-3w'>
-            <h4 className='fr-h6 fr-mb-1w'>{elementTitle}</h4>
+            <h4 className='fr-h6 fr-mb-1w'>{title}</h4>
             <Range
               small
               label={label}
@@ -105,7 +106,7 @@ export function ElementList({elements, onChange, onDelete}: ElementListProps) {
               }}
             >
               Supprimer
-              <span className='fr-sr-only'>{` : ${elementTitle}`}</span>
+              <span className='fr-sr-only'>{` : ${title}`}</span>
             </Button>
           </li>
         )

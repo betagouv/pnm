@@ -27,6 +27,7 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Habitat générique | `habitatGenerique` | Habitat de la typologie Natura 2000 qui regroupe des habitats élémentaires : `1120` pour les herbiers de Posidonia. |
 | Objectif à long terme | `objectifLongTerme` | Objectif du plan de gestion d'un parc, décliné en sous-objectifs. Un habitat relève de l'un d'eux. |
 | Habitat | `habitat` | Habitat élémentaire du plan de gestion d'un parc, identifié par son code habitat élémentaire, tel que l'écrivent les gestionnaires du parc : `1120-1` pour les herbiers à posidonie. |
+| Croisement | `croisement` | Ce que rencontre la localisation d'un projet : habitats, et plus tard espèces et zones de gouvernance, avec les surfaces et les distances. |
 | Espèce | `espece` | Espèce, identifiée par `cdnom` (référentiel TAXREF). |
 | Mesure ERC | `mesureErc` | Mesure pour Éviter, Réduire ou Compenser un impact. |
 | Référentiel | `referentiel` | Jeu de données de référence préparé par les traitements et publié sur S3. |

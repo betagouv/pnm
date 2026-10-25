@@ -1,8 +1,14 @@
-import type {Cartographie, Config, MultiPolygon} from '@pnm/shared'
+import type {
+  Cartographie,
+  Config,
+  Croisement,
+  MultiPolygon,
+} from '@pnm/shared'
 import {data, type LoaderFunctionArgs} from 'react-router'
-import {fetchApi} from './api.ts'
+import {fetchApi, postApi} from './api.ts'
 import {fetchPerimetre} from './parcs.ts'
 import {fetchPlanGestion, findHabitat} from './plan-gestion.ts'
+import {readProjet} from './projet-storage.ts'
 
 async function fetchConfig(): Promise<Config> {
   return fetchApi<Config>('/config')
@@ -12,6 +18,43 @@ async function fetchConfig(): Promise<Config> {
 async function fetchTilesUrl(): Promise<string> {
   const {habitatsTilesUrl} = await fetchConfig()
   return new URL(habitatsTilesUrl, globalThis.location.href).href
+}
+
+// What the habitats step has to show
+export type HabitatsStepData =
+  | {
+    readonly status: 'loaded'
+    readonly croisement: Croisement
+    readonly perimetre: MultiPolygon
+    readonly tilesUrl: string
+  }
+  // The croisement failed: the porteur de projet can go on
+  | {readonly status: 'unavailable'}
+  | {readonly status: 'noLocalisation'}
+
+export async function loadHabitatsStep({params}: LoaderFunctionArgs): Promise<HabitatsStepData> {
+  const parc = params.parcId!
+  const localisation = readProjet(parc)?.localisation ?? []
+
+  if (localisation.length === 0) {
+    return {status: 'noLocalisation'}
+  }
+
+  try {
+    const [croisement, perimetre, tilesUrl] = await Promise.all([
+      postApi<Croisement>('/croisement', {parc, localisation}),
+      fetchPerimetre(parc),
+      fetchTilesUrl(),
+    ])
+    return {
+      status: 'loaded',
+      croisement,
+      perimetre,
+      tilesUrl,
+    }
+  } catch {
+    return {status: 'unavailable'}
+  }
 }
 
 export type HabitatPageData = {

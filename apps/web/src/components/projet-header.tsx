@@ -45,7 +45,7 @@ export function ProjetHeader({
         </p>
         <h1 className='fr-mb-2w'>Préparer mon projet</h1>
         <p className='fr-text--lead fr-mb-4w'>
-          Préparez votre projet en mer en trois étapes et découvrez les démarches adaptées.
+          Préparez votre projet en mer en quatre étapes et découvrez les démarches adaptées.
         </p>
         {step && (
           <div className='fr-grid-row'>
