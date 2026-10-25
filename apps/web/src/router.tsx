@@ -10,7 +10,7 @@ import {
 import {AppLayout} from './app-layout.tsx'
 import {PageLayout} from './components/page-layout.tsx'
 import {ActiviteStepPage} from './pages/activite-step-page.tsx'
-import {loadHabitatPage} from './habitats.ts'
+import {loadHabitatPage, loadHabitatsStep} from './habitats.ts'
 import {ActionPage} from './pages/action-page.tsx'
 import {EnjeuPage} from './pages/enjeu-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
@@ -102,6 +102,16 @@ export const router = createBrowserRouter([
                       async Component() {
                         const {LocalisationStepPage} = await import('./pages/localisation-step-page.tsx')
                         return LocalisationStepPage
+                      },
+                    },
+                  },
+                  {
+                    path: 'habitats',
+                    loader: loadHabitatsStep,
+                    lazy: {
+                      async Component() {
+                        const {HabitatsStepPage} = await import('./pages/habitats-step-page.tsx')
+                        return HabitatsStepPage
                       },
                     },
                   },

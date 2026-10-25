@@ -29,11 +29,30 @@ export async function fetchApi<T>(path: string): Promise<T> {
   }
 }
 
-async function requestApi(path: string): Promise<unknown> {
-  const response = await fetch(`/api${path}`)
+// The same body gets the same answer during a visit: one request per path and body
+export async function postApi<T>(path: string, body: unknown): Promise<T> {
+  const json = JSON.stringify(body)
+  const key = `POST ${path} ${json}`
+  let request = requests.get(key)
+
+  if (!request) {
+    request = requestApi(path, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: json})
+    requests.set(key, request)
+  }
+
+  try {
+    return await (request as Promise<T>)
+  } catch (error) {
+    requests.delete(key)
+    throw error
+  }
+}
+
+async function requestApi(path: string, init?: RequestInit): Promise<unknown> {
+  const response = await fetch(`/api${path}`, init)
 
   if (!response.ok) {
-    throw new ApiError(`GET /api${path} failed with status ${response.status}`, response.status)
+    throw new ApiError(`${init?.method ?? 'GET'} /api${path} failed with status ${response.status}`, response.status)
   }
 
   return response.json()

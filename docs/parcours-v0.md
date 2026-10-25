@@ -7,10 +7,11 @@
 1. **Accueil.** La page explique à quoi sert le service et présente les grandes étapes. Un
    bouton « Préparer mon projet » s'adresse aux porteurs de projet.
 2. **Préparer mon projet.** Le porteur choisit d'abord le parc naturel marin concerné.
-3. **Parcours guidé** dans le parc choisi, en trois étapes :
+3. **Parcours guidé** dans le parc choisi, en quatre étapes :
    1. **Votre activité** ;
    2. **Localisation du projet** ;
-   3. **Mesures à prendre**.
+   3. **Habitats concernés** ;
+   4. **Mesures à prendre**.
 
 ## Accueil
 
@@ -58,10 +59,10 @@ Le parc choisi est porté par l'adresse : `/parcs/<parc>/<section>`, par exemple
 d'en changer en restant dans la même section. Les futures sections (actualités, carte
 interactive) conserveront ainsi le parc choisi.
 
-## Le parcours en trois étapes
+## Le parcours en quatre étapes
 
 Chaque étape a sa propre adresse : `/parcs/<parc>/preparer-mon-projet/<étape>`, avec
-`activite`, `localisation` et `mesures`. Un bandeau commun rappelle le parc et porte
+`activite`, `localisation`, `habitats` et `mesures`. Un bandeau commun rappelle le parc et porte
 l'indicateur d'étapes du DSFR. En bas de page, « Retour » et « Continuer » passent d'une étape à
 l'autre. La page ne saute pas en haut : l'indicateur d'étapes revient dans l'écran en douceur s'il
 en était sorti, et son titre prend le focus pour que les lecteurs d'écran annoncent l'étape.
@@ -142,7 +143,25 @@ Questions ouvertes :
   localisation du projet : à renommer ?
 - Quelles autres informations décrivent le projet ?
 
-### 3. Mesures à prendre
+### 3. Habitats concernés
+
+Une fois la localisation validée, l'étape montre les habitats que rencontre le projet, d'après le
+croisement de sa localisation par l'API. Sans localisation, elle renvoie à l'étape 2.
+
+- La surface couverte par le projet, puis une carte (card) DSFR par habitat, en deux groupes :
+  **dans votre zone de projet** et **à proximité** (à moins de la tolérance du croisement).
+- Chaque carte donne la part du projet dans l'habitat et sa surface, avec une jauge à la couleur
+  de l'habitat, ou sa distance au projet. Quand le projet a plusieurs éléments, elle dit lesquels
+  sont concernés.
+- Sous les cartes, la part du projet qui ne recoupe aucun habitat connu.
+- Choisir une carte (un bouton) affiche à côté, ou dessous sur mobile, l'aperçu de l'habitat par
+  rapport au projet : ses chiffres, la carte de l'habitat sur la zone du projet, lue dans les
+  PMTiles des habitats, avec une légende, le début de sa présentation et un lien vers sa fiche.
+  L'habitat qui prend la plus grande part du projet est choisi d'emblée. Les contours de l'habitat
+  sont élargis et simplifiés par la chaîne : l'aperçu le dit.
+- Si l'API ne peut pas croiser la localisation, l'étape le signale et laisse continuer.
+
+### 4. Mesures à prendre
 
 Squelette : l'étape rappelle l'activité choisie et annonce les mesures.
 
@@ -173,7 +192,7 @@ deviennent des titres, des sections ou des étiquettes :
   l'inventaire des données géographiques.
 - Navigation : un menu latéral DSFR liste la présentation, les enjeux, les habitats et les actions
   ; un fil d'Ariane situe chaque page ; les pages se lient entre elles (habitat et enjeu, action et
-  objectif).
+  objectif). L'aperçu d'un habitat, à l'étape 3, mène à sa page.
 - Les textes du plan sont repris tels que tapés dans Grist : paragraphes séparés par une ligne
   vide, listes dont les lignes commencent par `*` ou `-`.
 

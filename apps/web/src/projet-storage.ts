@@ -128,6 +128,12 @@ export function saveProjet(projet: Projet): void {
   }
 }
 
+// The projet in progress in this parc, if any, for a loader
+export function readProjet(parcId: string): Projet | undefined {
+  const projet = getProjet()
+  return projet?.parc === parcId ? projet : undefined
+}
+
 // The projet in progress in this parc, if any
 export function useProjet(parcId: string): Projet | undefined {
   const projet = useSyncExternalStore(subscribe, getProjet)

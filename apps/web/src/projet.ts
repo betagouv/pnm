@@ -10,6 +10,7 @@ export const projetRouteId = 'projet'
 export const projetSteps = [
   {path: 'activite', titre: 'Votre activité'},
   {path: 'localisation', titre: 'Localisation du projet'},
+  {path: 'habitats', titre: 'Habitats concernés'},
   {path: 'mesures', titre: 'Mesures à prendre'},
 ] as const
 

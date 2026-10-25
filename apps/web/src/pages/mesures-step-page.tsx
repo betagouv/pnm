@@ -22,7 +22,7 @@ export function MesuresStepPage() {
         severity='info'
         description='Vous trouverez bientôt ici les mesures à prendre pour votre projet, selon votre activité et sa localisation dans le parc.'
       />
-      <StepNavigation previous={projetStepPath(parc.id, 'localisation')} />
+      <StepNavigation previous={projetStepPath(parc.id, 'habitats')} />
     </>
   )
 }

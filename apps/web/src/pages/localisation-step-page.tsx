@@ -75,7 +75,7 @@ export function LocalisationStepPage() {
 
     saveElements(localisation)
     // Keeps the scroll position, like the other links between steps
-    void navigate(projetStepPath(parc.id, 'mesures'), {preventScrollReset: true})
+    void navigate(projetStepPath(parc.id, 'habitats'), {preventScrollReset: true})
   }
 
   return (
