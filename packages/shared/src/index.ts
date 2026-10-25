@@ -1,4 +1,6 @@
 export * from './activites.ts'
 export * from './geometries.ts'
+export * from './habitats.ts'
 export * from './parcs.ts'
+export * from './plan-gestion.ts'
 export * from './projets.ts'

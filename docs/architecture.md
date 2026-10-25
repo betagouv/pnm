@@ -127,6 +127,12 @@ et, en développement, le middleware Vite.
 - Ce qu'on fait des sources reste dans le dépôt : quelles couches, quels objets, à quel habitat
   on les rattache, avec quel tampon. Un document Grist ne fournit que du contenu métier, comme les
   habitats d'un plan de gestion.
+- Chaque parc a un plan de gestion en vigueur, dans son propre document Grist, qui porte son
+  contenu : habitats, recommandations, nomenclature des activités. Les codes d'habitat sont ceux
+  qu'écrivent les gestionnaires du parc, pris tels quels. Les référentiels communs se limitent a
+  priori à la liste des parcs.
+- Une couche n'appartient à aucun parc : nationale ou par façade maritime, elle se rattache aux
+  habitats par leur code, quel que soit le plan de gestion qui les cite.
 - Une couche est traitée entière, jamais découpée à un parc : ce que la chaîne produit peut servir
   à d'autres usages que les nôtres.
 - Le tampon redresse une couche, pour le rendu comme pour le croisement : des miettes, des éclats

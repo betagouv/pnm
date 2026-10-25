@@ -6,6 +6,7 @@
     "download": "node --env-file-if-exists=../.env src/download.ts",
     "perimetres": "node src/perimetres.ts",
     "habitats": "node src/habitats/index.ts",
+    "plan-gestion": "node src/plan-gestion/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
