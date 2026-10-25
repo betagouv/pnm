@@ -16,7 +16,17 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Zone | `zone` | Surface d'un projet, donnée par ses angles, avec une marge autour. |
 | Périmètre | `perimetre` | Limite officielle d'un parc naturel marin. |
 | Pression | `pression` | Effet qu'une activité exerce sur le milieu marin. |
-| Habitat | `habitat` | Habitat marin, identifié par `cdhab` (référentiel HABREF). |
+| Plan de gestion | `planGestion` | Document qui fixe les objectifs de gestion d'un parc naturel marin. |
+| Enjeu | `enjeu` | Ce que le plan de gestion d'un parc vise à préserver : la qualité de l'eau, les espèces, les habitats… Il se décline en objectifs à long terme. |
+| Sous-enjeu | `sousEnjeu` | Étiquette qui range les objectifs à long terme d'un enjeu. |
+| Sous-objectif | `sousObjectif` | Déclinaison concrète d'un objectif à long terme, avec son niveau d'exigence et ses indicateurs. |
+| Niveau d'exigence | `niveauExigence` | Ce qu'un sous-objectif demande d'atteindre. |
+| Indicateur | `indicateur` | Ce qui mesure l'atteinte d'un sous-objectif, identifié par un code : `I4-7a-A`. |
+| Action | `action` | Action menée par le parc, étude ou suivi, au service d'enjeux et d'objectifs du plan de gestion. |
+| Recommandation | `recommandation` | Conseil pour une activité au regard d'un habitat, écrit ou en lien (POOLPE). |
+| Habitat générique | `habitatGenerique` | Habitat de la typologie Natura 2000 qui regroupe des habitats élémentaires : `1120` pour les herbiers de Posidonia. |
+| Objectif à long terme | `objectifLongTerme` | Objectif du plan de gestion d'un parc, décliné en sous-objectifs. Un habitat relève de l'un d'eux. |
+| Habitat | `habitat` | Habitat élémentaire du plan de gestion d'un parc, identifié par son code habitat élémentaire, tel que l'écrivent les gestionnaires du parc : `1120-1` pour les herbiers à posidonie. |
 | Espèce | `espece` | Espèce, identifiée par `cdnom` (référentiel TAXREF). |
 | Mesure ERC | `mesureErc` | Mesure pour Éviter, Réduire ou Compenser un impact. |
 | Référentiel | `referentiel` | Jeu de données de référence préparé par les traitements et publié sur S3. |
