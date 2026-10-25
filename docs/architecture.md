@@ -95,9 +95,11 @@ et, en développement, le middleware Vite.
 ### Chaîne de traitement (`pipelines/`)
 
 - Elle tourne en local, jamais en production : ses dépendances sont des dépendances de
-  développement.
+  développement. tippecanoe, qui produit les PMTiles, s'installe à part (`brew install
+  tippecanoe`).
 - Ses données sont dans `data/`, à la racine, ignoré par git et sans code : `raw/` garde les
-  sources telles que téléchargées, avec la date et le nombre d'objets ; `dist/` reçoit ce que la
+  sources telles que téléchargées, avec la date et le nombre d'objets ; `work/` garde les résultats
+  intermédiaires d'une étape, refaits quand ce qui les produit change ; `dist/` reçoit ce que la
   chaîne produit. Un nouveau téléchargement ne remplace l'ancien qu'une fois complet.
 - Le téléchargement ne transforme rien : il stocke la donnée brute. Toute transformation produit
   une donnée dérivée, à partir de `raw/`, et se régénère quand on veut, sans le serveur : on
@@ -106,6 +108,20 @@ et, en développement, le middleware Vite.
   vérifie le nombre d'objets, et que la clé est unique et toujours remplie.
 - Les transformations se font dans DuckDB, avec son extension spatiale : le même moteur qu'en
   production.
+- Une étape lourde lit le brut page par page et garde ses tables dans une base DuckDB sur disque,
+  sous `work/` : la mémoire dépend de la taille d'une page, pas de celle d'une couche.
+- Une étape est découpée par couche. Ce qu'elle tire d'une couche est gardé sous `work/`, avec
+  l'empreinte de ce qui l'a produit : le téléchargement, les requêtes et les versions de DuckDB et
+  de son extension spatiale. Tant que l'empreinte ne change pas, la couche n'est pas refaite :
+  changer un paramètre d'une couche ne relance qu'elle. L'assemblage final se refait à chaque
+  passage.
+- Chaque couche se traite dans une projection métrique de là où elle se trouve (Lambert-93 en
+  métropole et en Corse), puis s'écrit dans le format pivot, en WGS 84. L'assemblage et ce qu'il
+  produit, GeoParquet et PMTiles, sont en WGS 84.
+- Le moteur des couches ne connaît aucune couche : il lit le brut page par page, applique le
+  traitement d'une couche, garde son résultat au format pivot avec son empreinte, puis publie le
+  GeoParquet et les PMTiles. Chaque couche a son propre fichier : sa source, sa projection, ses
+  règles et, s'il le faut, son traitement propre. Une étape ne fait qu'orchestrer.
 - Une reprojection passe toujours par PROJ (`ST_Transform`), jamais par une formule écrite à la
   main.
 

@@ -2,7 +2,7 @@
 // areas of the OFB, simplified for display. npm run perimetres -w @pnm/pipelines
 import {mkdir, writeFile} from 'node:fs/promises'
 import {type MultiPolygon, multiPolygonSchema} from '@pnm/shared'
-import {connect, loadRaw} from './duckdb.ts'
+import {connect, loadRaw} from './lib/duckdb.ts'
 import {airesMarinesProtegees} from './sources.ts'
 
 // About 20 m: invisible at the zooms where a whole parc is shown
