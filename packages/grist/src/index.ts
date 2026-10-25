@@ -72,9 +72,15 @@ type Request = {
   readonly isIdempotent: boolean
 }
 
+// What the load balancer of a Grist instance answers when the server holding the document is gone.
+// Grist itself takes it for a missing server and tries another one
+function isWorkerMissing(error: HttpError): boolean {
+  return error.status === 404 && error.message.includes('document worker not present')
+}
+
 function isRetryable(error: unknown, isIdempotent: boolean): boolean {
   return error instanceof HttpError
-    ? error.status === 429 || (isIdempotent && error.status >= 500)
+    ? error.status === 429 || (isIdempotent && (error.status >= 500 || isWorkerMissing(error)))
     : isIdempotent
 }
 
@@ -172,18 +178,54 @@ function writeQuery({parse = false}: WriteOptions): Record<string, string> {
   return parse ? {} : {noparse: 'true'}
 }
 
-// Sends the items in batches, one after the other. A batch that fails stops the others, and the
-// error tells how many items were already written: they stay written
-async function inBatches<T, R>(items: readonly T[], label: string, write: (batch: T[]) => Promise<R[]>): Promise<R[]> {
-  const results: R[] = []
+function bySize<T>(items: readonly T[]): T[][] {
+  const batches: T[][] = []
 
   for (let start = 0; start < items.length; start += batchSize) {
+    batches.push(items.slice(start, start + batchSize))
+  }
+
+  return batches
+}
+
+// Grist writes the records of a request column by column, from the fields of them all: an update
+// wants the same fields on every record, and an addition sets the fields that a record lacks to
+// null rather than to their default. A batch thus holds records with the same fields, kept in the
+// order given
+function bySizeAndFields<T extends {readonly fields: Record<string, unknown>}>(records: readonly T[]): T[][] {
+  const runs: T[][] = []
+  let previousFields: string | undefined
+
+  for (const record of records) {
+    const fields = Object.keys(record.fields).toSorted().join(',')
+
+    if (fields === previousFields) {
+      runs.at(-1)!.push(record)
+    } else {
+      runs.push([record])
+      previousFields = fields
+    }
+  }
+
+  return runs.flatMap(run => bySize(run))
+}
+
+// Sends the batches one after the other. A batch that fails stops the others, and the error tells
+// how many items were already written: they stay written
+async function inBatches<T, R>(batches: readonly T[][], label: string, write: (batch: T[]) => Promise<R[]>): Promise<R[]> {
+  const total = batches.reduce((count, batch) => count + batch.length, 0)
+  const results: R[] = []
+  let written = 0
+
+  for (const batch of batches) {
     try {
       // eslint-disable-next-line no-await-in-loop
-      results.push(...await write(items.slice(start, start + batchSize)))
+      results.push(...await write(batch))
     } catch (error) {
-      throw new Error(`${label}: ${start} of ${items.length} written before the error. ${(error as Error).message}`, {cause: error})
+      throw new Error(`${label}: ${written} of ${total} written before the error. ${(error as Error).message}`, {cause: error})
     }
+
+    written += batch.length
   }
 
   return results
@@ -196,7 +238,7 @@ export async function addRecords(
   records: ReadonlyArray<{readonly fields: Record<string, unknown>}>,
   options: WriteOptions = {},
 ): Promise<number[]> {
-  return inBatches(records, `${tableId}: add`, async batch => {
+  return inBatches(bySizeAndFields(records), `${tableId}: add`, async batch => {
     const response = await send<{records: Array<{id: number}>}>(document, {
       method: 'POST',
       path: `${tablePath(tableId)}/records`,
@@ -214,7 +256,7 @@ export async function updateRecords(
   records: readonly GristRecord[],
   options: WriteOptions = {},
 ): Promise<void> {
-  await inBatches(records, `${tableId}: update`, async batch => {
+  await inBatches(bySizeAndFields(records), `${tableId}: update`, async batch => {
     await send(document, {
       method: 'PATCH',
       path: `${tablePath(tableId)}/records`,
@@ -246,7 +288,8 @@ export async function upsertRecords(
     ...(noupdate === true && {noupdate: 'true'}),
   }
 
-  await inBatches(records, `${tableId}: upsert`, async batch => {
+  // Unlike an update or an addition, Grist sorts these records by their fields itself
+  await inBatches(bySize(records), `${tableId}: upsert`, async batch => {
     await send(document, {
       method: 'PUT',
       path: `${tablePath(tableId)}/records`,
@@ -259,7 +302,7 @@ export async function upsertRecords(
 }
 
 export async function deleteRecords(document: GristDocument, tableId: string, ids: readonly number[]): Promise<void> {
-  await inBatches(ids, `${tableId}: delete`, async batch => {
+  await inBatches(bySize(ids), `${tableId}: delete`, async batch => {
     await send(document, {
       method: 'POST',
       path: `${tablePath(tableId)}/records/delete`,
