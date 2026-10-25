@@ -44,6 +44,14 @@ export function AppLayout() {
       linkProps: {to: parc ? parcPath(parc.id) : preparerProjetPath},
       isActive: pathname === preparerProjetPath || section === 'preparer-mon-projet',
     },
+    // The plan de gestion of the parc in view, once the parc is open
+    ...(parc?.disponible
+      ? [{
+        text: 'Plan de gestion',
+        linkProps: {to: parcPath(parc.id, 'plan-de-gestion')},
+        isActive: section === 'plan-de-gestion',
+      }]
+      : []),
   ]
 
   return (

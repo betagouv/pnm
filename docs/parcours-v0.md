@@ -148,3 +148,38 @@ Squelette : l'étape rappelle l'activité choisie et annonce les mesures.
 
 La maquette y montre les mesures concrètes à prendre, des projets similaires et des guides de
 bonnes pratiques, et un encart « Besoin d'un accompagnement ? ». Contenus et sources à définir.
+
+## Plan de gestion
+
+Le plan de gestion d'un parc a ses pages, indépendantes du projet, sous
+`/parcs/<parc>/plan-de-gestion`. Une entrée « Plan de gestion » du menu principal y mène, pour le
+parc en cours. Seul le plan du Cap Corse et de l'Agriate est dans Grist ; un parc sans plan de
+gestion n'a pas ces pages. Le contenu est encore partiel : chaque page dit ce qui manque.
+
+Une entité a sa page quand elle porte un contenu propre ; celles qui ne font que ranger les autres
+deviennent des titres, des sections ou des étiquettes :
+
+| Page | Adresse | Contenu |
+| --- | --- | --- |
+| Présentation | `plan-de-gestion` | Le document officiel, les enjeux, les habitats rangés par habitat générique, les actions |
+| Enjeu | `plan-de-gestion/enjeux/<id>` | Sa formulation et sa synthèse, ses objectifs à long terme, chacun avec ses sous-objectifs, leur niveau d'exigence et leurs indicateurs ; les habitats et les actions liés |
+| Habitat | `plan-de-gestion/habitats/<code habitat>` | Sa présentation, l'enjeu et l'objectif dont il relève, ses codes, ses recommandations, et sa carte sur tout le parc quand la chaîne en a les surfaces |
+| Action | `plan-de-gestion/actions/<id>` | Sa synthèse, sa période, son porteur, son financement, et ce qu'elle sert dans le plan |
+
+- Sans page : l'objectif à long terme (un titre de section de son enjeu, avec une ancre), le
+  sous-objectif et ses indicateurs (un bloc sous son objectif), la recommandation (dans la fiche
+  de son habitat).
+- Pas affichés : le sous-enjeu, simple étiquette ; la nomenclature des activités, les métriques et
+  l'inventaire des données géographiques.
+- Navigation : un menu latéral DSFR liste la présentation, les enjeux, les habitats et les actions
+  ; un fil d'Ariane situe chaque page ; les pages se lient entre elles (habitat et enjeu, action et
+  objectif).
+- Les textes du plan sont repris tels que tapés dans Grist : paragraphes séparés par une ligne
+  vide, listes dont les lignes commencent par `*` ou `-`.
+
+Questions ouvertes :
+
+- Les noms des habitats viennent tels quels du plan de gestion, dans Grist : leurs suffixes
+  (« - habitat prioritaire ») sont à harmoniser.
+- Hors des côtes, la photographie aérienne de l'IGN laisse des tuiles blanches : un fond
+  vectoriel (OpenFreeMap) les éviterait.

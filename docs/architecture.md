@@ -53,7 +53,10 @@ et, en développement, le middleware Vite.
   visite.
 - L'adresse désigne une page, elle ne stocke pas d'état. Ce que saisit le porteur de projet est
   gardé dans le navigateur (`localStorage`), en attendant un stockage en base.
-- MapLibre est lourd : seule la page qui affiche une carte le charge.
+- MapLibre est lourd : seules les pages qui affichent une carte le chargent. Les cartes partagent
+  le fond, le périmètre et le dessin du projet.
+- Les surfaces des habitats s'affichent depuis leurs PMTiles, lus par le protocole `pmtiles` de
+  MapLibre, à l'adresse que donne `GET /api/config`.
 
 ### API (`apps/api/src`)
 

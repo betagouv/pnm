@@ -10,10 +10,15 @@ import {
 import {AppLayout} from './app-layout.tsx'
 import {PageLayout} from './components/page-layout.tsx'
 import {ActiviteStepPage} from './pages/activite-step-page.tsx'
+import {loadHabitatPage} from './habitats.ts'
+import {ActionPage} from './pages/action-page.tsx'
+import {EnjeuPage} from './pages/enjeu-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
 import {HomePage} from './pages/home-page.tsx'
 import {MesuresStepPage} from './pages/mesures-step-page.tsx'
 import {NotFoundPage} from './pages/not-found-page.tsx'
+import {PlanGestionLayout} from './pages/plan-gestion-layout.tsx'
+import {PlanGestionPage} from './pages/plan-gestion-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
 import {ProjetLayout} from './pages/projet-layout.tsx'
 import {
@@ -23,6 +28,12 @@ import {
   parcRouteId,
   parcsRouteId,
 } from './parcs.ts'
+import {
+  loadAction,
+  loadEnjeu,
+  loadPlanGestion,
+  planGestionRouteId,
+} from './plan-gestion.ts'
 import {fetchActivites, projetRouteId, projetStepPath} from './projet.ts'
 
 async function loadParc({params}: LoaderFunctionArgs): Promise<Parc> {
@@ -86,7 +97,7 @@ export const router = createBrowserRouter([
                   {
                     path: 'localisation',
                     loader: async ({params}) => fetchPerimetre(params.parcId!),
-                    // MapLibre is heavy: only this step loads it
+                    // MapLibre is heavy: only the pages with a map load it
                     lazy: {
                       async Component() {
                         const {LocalisationStepPage} = await import('./pages/localisation-step-page.tsx')
@@ -95,6 +106,28 @@ export const router = createBrowserRouter([
                     },
                   },
                   {path: 'mesures', Component: MesuresStepPage},
+                ],
+              },
+              {
+                id: planGestionRouteId,
+                path: 'plan-de-gestion',
+                loader: loadPlanGestion,
+                Component: PlanGestionLayout,
+                children: [
+                  {index: true, Component: PlanGestionPage},
+                  {path: 'enjeux/:enjeuId', loader: loadEnjeu, Component: EnjeuPage},
+                  {path: 'actions/:actionId', loader: loadAction, Component: ActionPage},
+                  {
+                    path: 'habitats/:code',
+                    loader: loadHabitatPage,
+                    // MapLibre is heavy: only the pages with a map load it
+                    lazy: {
+                      async Component() {
+                        const {HabitatPage} = await import('./pages/habitat-page.tsx')
+                        return HabitatPage
+                      },
+                    },
+                  },
                 ],
               },
             ],
