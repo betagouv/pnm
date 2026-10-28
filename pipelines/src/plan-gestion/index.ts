@@ -1,16 +1,16 @@
 // The plan de gestion of each parc, from its Grist document: the enjeux of the parc with their
-// objectifs, its habitats and its actions. The tables that only sort the others give labels, not
-// entries: the sous-enjeux, the nomenclature of activités
+// objectifs, its habitats, its actions and the activités a porteur de projet can pick. The tables
+// that only sort the others give labels, not entries: the sous-enjeux
 // npm run plan-gestion -w @pnm/pipelines
 import {mkdir, writeFile} from 'node:fs/promises'
 import {join} from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {
   type Action,
+  type Activite,
   type Enjeu,
   type Habitat,
   type PlanGestion,
-  type Recommandation,
   planGestionSchema,
 } from '@pnm/shared'
 import type {GristRecord} from '@pnm/grist'
@@ -41,7 +41,6 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     indicateurs,
     habitats,
     actions,
-    recommandations,
     activites,
     guide,
   ] = await Promise.all([
@@ -51,14 +50,12 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     readRecords('Indicateurs'),
     readRecords('Habitats'),
     readRecords('Actions_recupere_depuis_EVA_'),
-    readRecords('Recommandation'),
-    readRecords('Activites2'),
+    readRecords('Activites_MPM_'),
     readRecords('Guide_d_utilisation'),
   ])
 
   // Grist refers to a record by its id, which these tables also hold as their own id
   const objectifEnjeu = new Map(objectifs.map(({id, fields}) => [id, ref(fields.id_enjeu)]))
-  const activiteNoms = new Map(activites.map(({id, fields}) => [id, text(fields.Libelle_niveau1_Act)]))
 
   const planEnjeux: Enjeu[] = enjeux.map(enjeu => ({
     id: enjeu.id,
@@ -84,8 +81,7 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     })),
   }))
 
-  const planHabitats: Habitat[] = habitats.flatMap(habitat => {
-    const {fields} = habitat
+  const planHabitats: Habitat[] = habitats.flatMap(({fields}) => {
     const code = text(fields.Code_habitat_elementaire)
     const nom = text(fields.Habitat_elementaire)
 
@@ -95,26 +91,6 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
 
     const codeGenerique = text(fields.Code_habitat_generique)
     const nomGenerique = text(fields.Habitat_generique)
-    const habitatRecommandations: Recommandation[] = recommandations
-      .filter(recommandation => ref(recommandation.fields.Fiche_habitat_Especes) === habitat.id)
-      .flatMap(({fields: recommandation}) => {
-        const reco = text(recommandation.Reco)
-        const avis = text(recommandation.Avis)
-
-        if (reco === undefined && avis === undefined) {
-          return []
-        }
-
-        const activite = ref(recommandation.Activite)
-
-        return [{
-          activite: activite === undefined ? undefined : activiteNoms.get(activite),
-          // A recommandation is either written out, or a link to where it is
-          texte: reco === undefined || isUrl(reco) ? undefined : reco,
-          lien: reco !== undefined && isUrl(reco) ? reco : undefined,
-          avis: avis !== undefined && isUrl(avis) ? avis : undefined,
-        }]
-      })
 
     return [{
       code,
@@ -124,8 +100,19 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
         : {code: codeGenerique, nom: nomGenerique},
       synthese: text(fields.Synthese_habitat),
       sousObjectif: ref(fields.Simplifie_sousobjectif),
-      recommandations: habitatRecommandations,
     }]
+  })
+
+  const planActivites: Activite[] = activites.flatMap(({id, fields}) => {
+    const nom = text(fields.Nom_de_l_activite)
+    return nom === undefined
+      ? []
+      : [{
+        id,
+        nom,
+        description: text(fields.Description),
+        pictogramme: text(fields.Pictogramme),
+      }]
   })
 
   const planActions: Action[] = actions.map(({id, fields}) => {
@@ -160,6 +147,7 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     enjeux: planEnjeux,
     habitats: planHabitats,
     actions: planActions,
+    activites: planActivites,
   })
 }
 
@@ -180,5 +168,12 @@ for (const source of plansGestion) {
   // eslint-disable-next-line no-await-in-loop
   await writeFile(file, JSON.stringify(plan, undefined, 2) + '\n')
   const sousObjectifCount = plan.enjeux.flatMap(enjeu => enjeu.objectifs.flatMap(objectif => objectif.sousObjectifs)).length
-  console.log(`${file}: ${plan.enjeux.length} enjeux, ${sousObjectifCount} sous-objectifs, ${plan.habitats.length} habitats, ${plan.actions.length} actions`)
+  const counts = [
+    `${plan.enjeux.length} enjeux`,
+    `${sousObjectifCount} sous-objectifs`,
+    `${plan.habitats.length} habitats`,
+    `${plan.actions.length} actions`,
+    `${plan.activites.length} activités`,
+  ]
+  console.log(`${file}: ${counts.join(', ')}`)
 }

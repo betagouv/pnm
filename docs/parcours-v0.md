@@ -82,12 +82,15 @@ La maquette reste indicative. Son titre « Cap projet » n'est pas repris : la p
 - Le porteur choisit une activité parmi des boutons radio riches du DSFR, avec pictogramme. La
   maquette montrait des tuiles, mais les tuiles DSFR servent à naviguer et n'ont pas d'état
   sélectionné. Continuer sans choix affiche une erreur sur le groupe de boutons.
-- Activités proposées, reprises de la maquette : « Manifestation nautique » et « Étude
-  scientifique ». Liste et descriptions **à confirmer**.
-- **Ajouter une activité** : une entrée dans `apps/api/src/activites.json`, pictogramme compris.
-  Le pictogramme est désigné par sa catégorie et son nom dans le DSFR, par exemple
-  `institutions/navy-anchor`. Un nom inconnu du DSFR laisse sa place vide.
-- Le référentiel des activités de POOLPE (OFB) est une piste, mais incomplet.
+- Les activités proposées sont celles du plan de gestion du parc, dans la table « Activités (MPM) »
+  de son document Grist : chaque parc a les siennes. Le projet garde l'identifiant Grist de
+  l'activité.
+- **Ajouter une activité** : une ligne dans cette table, avec son nom, sa description et son
+  pictogramme, puis un passage de la chaîne de traitement. Le pictogramme est désigné par sa
+  catégorie et son nom dans le DSFR, par exemple `institutions/navy-anchor`. Un nom inconnu du DSFR
+  laisse sa place vide.
+- La description de « Rechargement de plage » et son pictogramme (`environment/sun`) sont
+  provisoires, **à confirmer**.
 
 ### 2. Localisation du projet
 
@@ -182,14 +185,14 @@ deviennent des titres, des sections ou des étiquettes :
 | --- | --- | --- |
 | Présentation | `plan-de-gestion` | Le document officiel, les enjeux, les habitats rangés par habitat générique, les actions |
 | Enjeu | `plan-de-gestion/enjeux/<id>` | Sa formulation et sa synthèse, ses objectifs à long terme, chacun avec ses sous-objectifs, leur niveau d'exigence et leurs indicateurs ; les habitats et les actions liés |
-| Habitat | `plan-de-gestion/habitats/<code habitat>` | Sa présentation, l'enjeu et l'objectif dont il relève, ses codes, ses recommandations, et sa carte sur tout le parc quand la chaîne en a les surfaces |
+| Habitat | `plan-de-gestion/habitats/<code habitat>` | Sa présentation, l'enjeu et l'objectif dont il relève, ses codes, et sa carte sur tout le parc quand la chaîne en a les surfaces |
 | Action | `plan-de-gestion/actions/<id>` | Sa synthèse, sa période, son porteur, son financement, et ce qu'elle sert dans le plan |
 
 - Sans page : l'objectif à long terme (un titre de section de son enjeu, avec une ancre), le
-  sous-objectif et ses indicateurs (un bloc sous son objectif), la recommandation (dans la fiche
-  de son habitat).
-- Pas affichés : le sous-enjeu, simple étiquette ; la nomenclature des activités, les métriques et
-  l'inventaire des données géographiques.
+  sous-objectif et ses indicateurs (un bloc sous son objectif).
+- Pas affichés : le sous-enjeu, simple étiquette ; la nomenclature détaillée des activités (table
+  « Activités »), les métriques et l'inventaire des données géographiques ; les recommandations,
+  en attendant celles de la table « Recommandations (MPM) ».
 - Navigation : un menu latéral DSFR liste la présentation, les enjeux, les habitats et les actions
   ; un fil d'Ariane situe chaque page ; les pages se lient entre elles (habitat et enjeu, action et
   objectif). L'aperçu d'un habitat, à l'étape 3, mène à sa page.

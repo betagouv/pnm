@@ -66,8 +66,8 @@ et, en développement, le middleware Vite.
 - Le dépôt ne garde des données que ce qui est lié au code : les couches géographiques à traiter
   et leurs paramètres, qui se rattachent aux données de référence du plan de gestion (les codes
   d'habitat).
-- Les parcs, les activités et les périmètres sont encore des fichiers JSON de l'API, versionnés et
-  validés par Zod au démarrage : un héritage, qui passera par ce même chemin.
+- Les parcs et les périmètres sont encore des fichiers JSON de l'API, versionnés et validés par Zod
+  au démarrage : un héritage, qui passera par ce même chemin.
 - Sans ses données, le serveur ne démarre pas : l'API vérifie au démarrage, avant que le serveur
   n'écoute, que chacune est là et valide (les habitats, leurs surfaces et leurs PMTiles, le plan
   de gestion de chaque parc ouvert). Un déploiement sans elles échoue, et la version en ligne
@@ -79,9 +79,9 @@ et, en développement, le middleware Vite.
   le projet, et pour chaque habitat du plan de gestion du parc la part du projet qui s'y trouve, sa
   distance et les éléments concernés. Les espèces et les zones de gouvernance s'y ajouteront.
 - **Plan de gestion** : `GET /api/parcs/<parc>/plan-de-gestion` sert tout le plan d'un parc
-  (enjeux et leur arbre d'objectifs, habitats, actions), d'un seul tenant : le front en tire toutes
-  ses pages. Un parc sans plan de gestion répond 404. Le croisement reprend le contenu de chaque
-  habitat.
+  (enjeux et leur arbre d'objectifs, habitats, actions, activités proposées au porteur de projet),
+  d'un seul tenant : le front en tire toutes ses pages, et les activités du parcours. Un parc sans
+  plan de gestion répond 404. Le croisement reprend le contenu de chaque habitat.
 - `GET /api/habitats` donne les habitats que couvrent les surfaces de la chaîne : la fiche d'un
   habitat n'affiche de carte que pour eux.
 - Le croisement recalcule la surface de chaque élément comme la carte la dessine : le rayon d'un
@@ -165,9 +165,9 @@ et, en développement, le middleware Vite.
   on les rattache, avec quel tampon. Un document Grist ne fournit que du contenu métier, comme les
   habitats d'un plan de gestion.
 - Chaque parc a un plan de gestion en vigueur, dans son propre document Grist, qui porte son
-  contenu : habitats, recommandations, nomenclature des activités. Les codes d'habitat sont ceux
-  qu'écrivent les gestionnaires du parc, pris tels quels. Les référentiels communs se limitent a
-  priori à la liste des parcs.
+  contenu : habitats, activités proposées au porteur de projet, recommandations. Les codes
+  d'habitat sont ceux qu'écrivent les gestionnaires du parc, pris tels quels. Les référentiels
+  communs se limitent a priori à la liste des parcs.
 - Une couche n'appartient à aucun parc : nationale ou par façade maritime, elle se rattache aux
   habitats par leur code, quel que soit le plan de gestion qui les cite.
 - Une couche est traitée entière, jamais découpée à un parc : ce que la chaîne produit peut servir

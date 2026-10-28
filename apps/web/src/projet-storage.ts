@@ -34,6 +34,11 @@ function isDistance(value: unknown): value is number {
   return Number.isSafeInteger(value) && (value as number) >= 0
 }
 
+// The id of a record of the plan de gestion, as in its Grist document
+function isId(value: unknown): value is number {
+  return Number.isSafeInteger(value) && (value as number) > 0
+}
+
 // Mirrors the element schema of @pnm/shared, which the front does not bundle
 function isElement(value: unknown): value is Element {
   if (!isRecord(value) || typeof value.id !== 'string') {
@@ -77,7 +82,7 @@ function parseProjet(stored: string | undefined): Projet | undefined {
 
     return {
       parc,
-      activite: typeof activite === 'string' ? activite : undefined,
+      activite: isId(activite) ? activite : undefined,
       localisation: Array.isArray(localisation) ? localisation.filter(element => isElement(element)) : undefined,
     }
   } catch {

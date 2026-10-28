@@ -9,7 +9,7 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Parc naturel marin (PNM) | `parc` | Aire marine protégée gérée par l'OFB. On en compte 8. |
 | Porteur de projet | `porteurProjet` | Personne ou structure qui envisage un projet dans un parc naturel marin. |
 | Projet | `projet` | Ce que le porteur décrit dans le parcours : type d'activité, localisation… |
-| Activité | `activite` | Activité humaine en mer. |
+| Activité | `activite` | Activité humaine en mer. Le porteur de projet choisit la sienne parmi celles du plan de gestion du parc. |
 | Localisation | `localisation` | Les éléments qui situent un projet : lieux, parcours, zones. |
 | Lieux | `lieux` | Série de points d'un projet (mouillages, stations…), avec un rayon autour de chacun. |
 | Parcours | `parcours` | Tracé d'un projet, ouvert ou en boucle, avec la largeur de son couloir. |

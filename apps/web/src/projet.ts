@@ -1,7 +1,7 @@
 import type {Activite, Element, Position} from '@pnm/shared'
-import {useRouteLoaderData} from 'react-router'
-import {fetchApi} from './api.ts'
-import {parcPath} from './parcs.ts'
+import {type LoaderFunctionArgs, useRouteLoaderData} from 'react-router'
+import {fetchParcs, parcPath} from './parcs.ts'
+import {fetchPlanGestion} from './plan-gestion.ts'
 import {useProjet} from './projet-storage.ts'
 
 export const projetRouteId = 'projet'
@@ -20,8 +20,17 @@ export function projetStepPath(parcId: string, step: ProjetStep['path']): string
   return `${parcPath(parcId)}/${step}`
 }
 
-export async function fetchActivites(): Promise<Activite[]> {
-  return fetchApi<Activite[]>('/activites')
+// The activités of the parc, from its plan de gestion. A parc not yet open has none
+export async function loadActivites({params}: LoaderFunctionArgs): Promise<Activite[]> {
+  const parcs = await fetchParcs()
+  const parc = parcs.find(candidate => candidate.id === params.parcId)
+
+  if (!parc?.disponible) {
+    return []
+  }
+
+  const plan = await fetchPlanGestion(parc.id)
+  return plan.activites
 }
 
 export function useActivites(): Activite[] {

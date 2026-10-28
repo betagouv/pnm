@@ -34,7 +34,7 @@ import {
   loadPlanGestion,
   planGestionRouteId,
 } from './plan-gestion.ts'
-import {fetchActivites, projetRouteId, projetStepPath} from './projet.ts'
+import {loadActivites, projetRouteId, projetStepPath} from './projet.ts'
 
 async function loadParc({params}: LoaderFunctionArgs): Promise<Parc> {
   const parcs = await fetchParcs()
@@ -89,7 +89,7 @@ export const router = createBrowserRouter([
               {
                 id: projetRouteId,
                 path: 'preparer-mon-projet',
-                loader: fetchActivites,
+                loader: loadActivites,
                 Component: ProjetLayout,
                 children: [
                   {index: true, loader: ({params}) => redirect(projetStepPath(params.parcId!, 'activite'))},

@@ -54,12 +54,22 @@ export const actionSchema = z.object({
   sousObjectifs: z.array(idSchema),
 })
 
+// An activité that a porteur de projet can pick in the parc
+export const activiteSchema = z.object({
+  id: idSchema,
+  nom: textSchema,
+  description: textSchema.optional(),
+  // A DSFR pictogram, as "<category>/<name>": "institutions/navy-anchor"
+  pictogramme: z.string().regex(/^[a-z]+\/[a-z]+(?:-[a-z]+)*$/v).optional(),
+})
+
 export const planGestionSchema = z.object({
   // The plan de gestion as adopted and published
   document: z.url().optional(),
   enjeux: z.array(enjeuSchema),
   habitats: z.array(habitatSchema),
   actions: z.array(actionSchema),
+  activites: z.array(activiteSchema),
 }).refine(
   plan => new Set(plan.habitats.map(habitat => habitat.code)).size === plan.habitats.length,
   'Duplicate habitat code',
@@ -70,4 +80,5 @@ export type SousObjectif = z.infer<typeof sousObjectifSchema>
 export type Objectif = z.infer<typeof objectifSchema>
 export type Enjeu = z.infer<typeof enjeuSchema>
 export type Action = z.infer<typeof actionSchema>
+export type Activite = z.infer<typeof activiteSchema>
 export type PlanGestion = z.infer<typeof planGestionSchema>
