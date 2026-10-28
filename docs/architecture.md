@@ -79,9 +79,12 @@ et, en développement, le middleware Vite.
   le projet, et pour chaque habitat du plan de gestion du parc la part du projet qui s'y trouve, sa
   distance et les éléments concernés. Les espèces et les zones de gouvernance s'y ajouteront.
 - **Plan de gestion** : `GET /api/parcs/<parc>/plan-de-gestion` sert tout le plan d'un parc
-  (enjeux et leur arbre d'objectifs, habitats, actions, activités proposées au porteur de projet),
-  d'un seul tenant : le front en tire toutes ses pages, et les activités du parcours. Un parc sans
-  plan de gestion répond 404. Le croisement reprend le contenu de chaque habitat.
+  (enjeux et leur arbre d'objectifs, habitats, actions, activités proposées au porteur de projet,
+  recommandations), d'un seul tenant : le front en tire toutes ses pages, et les activités du
+  parcours. Un parc sans plan de gestion répond 404. Le croisement reprend le contenu de chaque
+  habitat.
+- Les recommandations d'un projet se choisissent dans le front, à partir du plan de gestion, de
+  l'activité du projet et des habitats du croisement.
 - `GET /api/habitats` donne les habitats que couvrent les surfaces de la chaîne : la fiche d'un
   habitat n'affiche de carte que pour eux.
 - Le croisement recalcule la surface de chaque élément comme la carte la dessine : le rayon d'un

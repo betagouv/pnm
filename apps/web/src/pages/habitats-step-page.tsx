@@ -54,7 +54,7 @@ export function HabitatsStepPage() {
             description='Les habitats ne peuvent pas être affichés pour le moment. Vous pouvez continuer, et revenir à cette étape plus tard.'
           />
         )}
-      <StepNavigation previous={projetStepPath(parc.id, 'localisation')} next={projetStepPath(parc.id, 'mesures')} />
+      <StepNavigation previous={projetStepPath(parc.id, 'localisation')} next={projetStepPath(parc.id, 'recommandations')} />
     </>
   )
 }

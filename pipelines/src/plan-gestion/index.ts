@@ -1,6 +1,7 @@
 // The plan de gestion of each parc, from its Grist document: the enjeux of the parc with their
-// objectifs, its habitats, its actions and the activités a porteur de projet can pick. The tables
-// that only sort the others give labels, not entries: the sous-enjeux
+// objectifs, its habitats, its actions, the activités a porteur de projet can pick and the
+// recommandations to them. The tables that only sort the others give labels, not entries: the
+// sous-enjeux
 // npm run plan-gestion -w @pnm/pipelines
 import {mkdir, writeFile} from 'node:fs/promises'
 import {join} from 'node:path'
@@ -11,6 +12,7 @@ import {
   type Enjeu,
   type Habitat,
   type PlanGestion,
+  type Recommandation,
   planGestionSchema,
 } from '@pnm/shared'
 import type {GristRecord} from '@pnm/grist'
@@ -28,6 +30,20 @@ function isUrl(value: string): boolean {
   return /^https?:\/\//v.test(value)
 }
 
+// The values that a list of Grist ids refers to. An id that the plan does not hold stops here: left
+// out, it would widen a recommandation to more projets
+function lookUp<T>(ids: readonly number[], values: ReadonlyMap<number, T>, what: string): T[] {
+  return ids.map(id => {
+    const value = values.get(id)
+
+    if (value === undefined) {
+      throw new Error(`${what}: ${id} is not in the plan de gestion`)
+    }
+
+    return value
+  })
+}
+
 async function readPlan(source: GristSource): Promise<PlanGestion> {
   async function readRecords(tableId: string): Promise<GristRecord[]> {
     const table = await readGristTable(source, tableId)
@@ -41,6 +57,7 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     indicateurs,
     habitats,
     actions,
+    recommandations,
     activites,
     guide,
   ] = await Promise.all([
@@ -50,6 +67,7 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     readRecords('Indicateurs'),
     readRecords('Habitats'),
     readRecords('Actions_recupere_depuis_EVA_'),
+    readRecords('Recommandations_MPM_'),
     readRecords('Activites_MPM_'),
     readRecords('Guide_d_utilisation'),
   ])
@@ -81,7 +99,8 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     })),
   }))
 
-  const planHabitats: Habitat[] = habitats.flatMap(({fields}) => {
+  // With their Grist id, which the recommandations refer to
+  const keptHabitats: Array<{id: number, habitat: Habitat}> = habitats.flatMap(({id, fields}) => {
     const code = text(fields.Code_habitat_elementaire)
     const nom = text(fields.Habitat_elementaire)
 
@@ -93,15 +112,19 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     const nomGenerique = text(fields.Habitat_generique)
 
     return [{
-      code,
-      nom,
-      habitatGenerique: codeGenerique === undefined || nomGenerique === undefined
-        ? undefined
-        : {code: codeGenerique, nom: nomGenerique},
-      synthese: text(fields.Synthese_habitat),
-      sousObjectif: ref(fields.Simplifie_sousobjectif),
+      id,
+      habitat: {
+        code,
+        nom,
+        habitatGenerique: codeGenerique === undefined || nomGenerique === undefined
+          ? undefined
+          : {code: codeGenerique, nom: nomGenerique},
+        synthese: text(fields.Synthese_habitat),
+        sousObjectif: ref(fields.Simplifie_sousobjectif),
+      },
     }]
   })
+  const habitatCodes = new Map(keptHabitats.map(({id, habitat}) => [id, habitat.code]))
 
   const planActivites: Activite[] = activites.flatMap(({id, fields}) => {
     const nom = text(fields.Nom_de_l_activite)
@@ -113,6 +136,24 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
         description: text(fields.Description),
         pictogramme: text(fields.Pictogramme),
       }]
+  })
+  const activiteIds = new Map(planActivites.map(({id}) => [id, id]))
+
+  const planRecommandations: Recommandation[] = recommandations.flatMap(({id, fields}) => {
+    const description = text(fields.Description)
+
+    if (description === undefined) {
+      return []
+    }
+
+    return [{
+      id,
+      titre: text(fields.Titre),
+      description,
+      enjeu: ref(fields.Enjeu),
+      activites: lookUp(refList(fields.Activites), activiteIds, `Recommandation ${id}, activités`),
+      habitats: lookUp(refList(fields.Habitats), habitatCodes, `Recommandation ${id}, habitats`),
+    }]
   })
 
   const planActions: Action[] = actions.map(({id, fields}) => {
@@ -145,9 +186,10 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
   return planGestionSchema.parse({
     document,
     enjeux: planEnjeux,
-    habitats: planHabitats,
+    habitats: keptHabitats.map(({habitat}) => habitat),
     actions: planActions,
     activites: planActivites,
+    recommandations: planRecommandations,
   })
 }
 
@@ -174,6 +216,7 @@ for (const source of plansGestion) {
     `${plan.habitats.length} habitats`,
     `${plan.actions.length} actions`,
     `${plan.activites.length} activités`,
+    `${plan.recommandations.length} recommandations`,
   ]
   console.log(`${file}: ${counts.join(', ')}`)
 }

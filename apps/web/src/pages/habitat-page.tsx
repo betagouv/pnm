@@ -2,6 +2,7 @@ import {CallOut} from '@codegouvfr/react-dsfr/CallOut'
 import {Link, useLoaderData, useParams} from 'react-router'
 import {HabitatMap} from '../components/habitat-map.tsx'
 import {PlanText} from '../components/plan-text.tsx'
+import {RecommandationCards} from '../components/recommandation-cards.tsx'
 import type {HabitatPageData} from '../habitats.ts'
 import {useParc} from '../parcs.ts'
 import {
@@ -20,6 +21,13 @@ export function HabitatPage() {
   // The route answers 404 for a habitat that the plan does not hold
   const habitat = findHabitat(plan, useParams().code)!
   const place = habitat.sousObjectif === undefined ? undefined : findSousObjectif(plan, habitat.sousObjectif)
+  const recommandations = plan.recommandations.filter(recommandation => recommandation.habitats.includes(habitat.code))
+  const activiteNoms = new Map(plan.activites.map(activite => [activite.id, activite.nom]))
+  // A recommandation meant for activités says which ones
+  const details = new Map(recommandations.flatMap(recommandation => {
+    const noms = recommandation.activites.flatMap(id => activiteNoms.get(id) ?? [])
+    return noms.length === 0 ? [] : [[recommandation.id, `Pour : ${noms.join(', ')}`] as const]
+  }))
 
   return (
     <>
@@ -48,6 +56,13 @@ export function HabitatPage() {
           <span className='fr-text--bold'>Habitat générique :</span>
           {` ${habitat.habitatGenerique.code}, ${habitat.habitatGenerique.nom}`}
         </p>
+      )}
+
+      {recommandations.length > 0 && (
+        <>
+          <h2 className='fr-mt-6w'>Recommandations</h2>
+          <RecommandationCards recommandations={recommandations} enjeux={plan.enjeux} details={details} titleAs='h3' />
+        </>
       )}
 
       <h2 className='fr-mt-6w'>L'habitat dans le parc</h2>

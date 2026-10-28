@@ -11,14 +11,14 @@
    1. **Votre activité** ;
    2. **Localisation du projet** ;
    3. **Habitats concernés** ;
-   4. **Mesures à prendre**.
+   4. **Recommandations**.
 
 ## Accueil
 
 - Pourquoi on est là, puis le bouton « Préparer mon projet ».
 - Les grandes étapes pour monter son projet :
   1. sélectionner l'activité et la zone concernée ;
-  2. consulter les impacts et les mesures à mettre en place ;
+  2. consulter les impacts et les recommandations du parc ;
   3. consulter la documentation du parc ;
   4. construire son projet en tenant compte des enjeux du parc naturel marin.
 
@@ -62,10 +62,10 @@ interactive) conserveront ainsi le parc choisi.
 ## Le parcours en quatre étapes
 
 Chaque étape a sa propre adresse : `/parcs/<parc>/preparer-mon-projet/<étape>`, avec
-`activite`, `localisation`, `habitats` et `mesures`. Un bandeau commun rappelle le parc et porte
-l'indicateur d'étapes du DSFR. En bas de page, « Retour » et « Continuer » passent d'une étape à
-l'autre. La page ne saute pas en haut : l'indicateur d'étapes revient dans l'écran en douceur s'il
-en était sorti, et son titre prend le focus pour que les lecteurs d'écran annoncent l'étape.
+`activite`, `localisation`, `habitats` et `recommandations`. Un bandeau commun rappelle le parc et
+porte l'indicateur d'étapes du DSFR. En bas de page, « Retour » et « Continuer » passent d'une étape
+à l'autre. La page ne saute pas en haut : l'indicateur d'étapes revient dans l'écran en douceur
+s'il en était sorti, et son titre prend le focus pour que les lecteurs d'écran annoncent l'étape.
 
 Le projet en cours est gardé dans le navigateur (`localStorage`) : un seul projet par
 navigateur, rattaché à son parc. Il survit à un rechargement et se retrouve en revenant sur le
@@ -164,12 +164,29 @@ croisement de sa localisation par l'API. Sans localisation, elle renvoie à l'é
   sont élargis et simplifiés par la chaîne : l'aperçu le dit.
 - Si l'API ne peut pas croiser la localisation, l'étape le signale et laisse continuer.
 
-### 4. Mesures à prendre
+### 4. Recommandations
 
-Squelette : l'étape rappelle l'activité choisie et annonce les mesures.
+L'étape rappelle l'activité choisie et montre les recommandations du plan de gestion pour le
+projet. Sans localisation, elle renvoie à l'étape 2.
 
-La maquette y montre les mesures concrètes à prendre, des projets similaires et des guides de
-bonnes pratiques, et un encart « Besoin d'un accompagnement ? ». Contenus et sources à définir.
+Une recommandation, dans la table « Recommandations (MPM) » du plan de gestion, peut viser des
+activités, des habitats, ou les deux :
+
+- si elle vise des activités, le projet doit avoir l'une d'elles ;
+- si elle vise des habitats, le projet doit en concerner un : dans sa zone ou à proximité, comme à
+  l'étape 3 ;
+- si elle ne vise rien, elle vaut pour tous les projets.
+
+Chaque recommandation est une carte (card) DSFR : une illustration, l'enjeu qu'elle sert en
+étiquette (tag), son titre et sa description. Une recommandation qui vise des habitats dit lesquels
+le projet concerne. L'illustration est provisoire, la même pour toutes, en attendant celles du plan
+de gestion. Sans titre, la description prend sa place.
+
+Si l'API ne peut pas croiser la localisation, l'étape le signale et montre les recommandations qui
+ne visent pas d'habitat.
+
+La maquette y montre aussi des projets similaires et des guides de bonnes pratiques, et un encart
+« Besoin d'un accompagnement ? ». Contenus et sources à définir.
 
 ## Plan de gestion
 
@@ -185,14 +202,15 @@ deviennent des titres, des sections ou des étiquettes :
 | --- | --- | --- |
 | Présentation | `plan-de-gestion` | Le document officiel, les enjeux, les habitats rangés par habitat générique, les actions |
 | Enjeu | `plan-de-gestion/enjeux/<id>` | Sa formulation et sa synthèse, ses objectifs à long terme, chacun avec ses sous-objectifs, leur niveau d'exigence et leurs indicateurs ; les habitats et les actions liés |
-| Habitat | `plan-de-gestion/habitats/<code habitat>` | Sa présentation, l'enjeu et l'objectif dont il relève, ses codes, et sa carte sur tout le parc quand la chaîne en a les surfaces |
+| Habitat | `plan-de-gestion/habitats/<code habitat>` | Sa présentation, l'enjeu et l'objectif dont il relève, ses codes, les recommandations qui le visent, et sa carte sur tout le parc quand la chaîne en a les surfaces |
 | Action | `plan-de-gestion/actions/<id>` | Sa synthèse, sa période, son porteur, son financement, et ce qu'elle sert dans le plan |
 
 - Sans page : l'objectif à long terme (un titre de section de son enjeu, avec une ancre), le
-  sous-objectif et ses indicateurs (un bloc sous son objectif).
+  sous-objectif et ses indicateurs (un bloc sous son objectif), la recommandation (une carte, comme
+  à l'étape 4, dans la fiche des habitats qu'elle vise, avec les activités qu'elle vise).
 - Pas affichés : le sous-enjeu, simple étiquette ; la nomenclature détaillée des activités (table
-  « Activités »), les métriques et l'inventaire des données géographiques ; les recommandations,
-  en attendant celles de la table « Recommandations (MPM) ».
+  « Activités »), les métriques et l'inventaire des données géographiques. Les recommandations qui
+  ne visent pas d'habitat n'apparaissent qu'à l'étape 4.
 - Navigation : un menu latéral DSFR liste la présentation, les enjeux, les habitats et les actions
   ; un fil d'Ariane situe chaque page ; les pages se lient entre elles (habitat et enjeu, action et
   objectif). L'aperçu d'un habitat, à l'étape 3, mène à sa page.

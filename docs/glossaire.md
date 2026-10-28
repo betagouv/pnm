@@ -23,7 +23,7 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Niveau d'exigence | `niveauExigence` | Ce qu'un sous-objectif demande d'atteindre. |
 | Indicateur | `indicateur` | Ce qui mesure l'atteinte d'un sous-objectif, identifié par un code : `I4-7a-A`. |
 | Action | `action` | Action menée par le parc, étude ou suivi, au service d'enjeux et d'objectifs du plan de gestion. |
-| Recommandation | `recommandation` | Conseil pour une activité au regard d'un habitat, écrit ou en lien (POOLPE). |
+| Recommandation | `recommandation` | Conseil du plan de gestion d'un parc au porteur de projet, rattaché à un enjeu. Elle peut viser des activités et des habitats : elle ne vaut alors que pour un projet qui a l'une de ces activités et concerne l'un de ces habitats. |
 | Habitat générique | `habitatGenerique` | Habitat de la typologie Natura 2000 qui regroupe des habitats élémentaires : `1120` pour les herbiers de Posidonia. |
 | Objectif à long terme | `objectifLongTerme` | Objectif du plan de gestion d'un parc, décliné en sous-objectifs. Un habitat relève de l'un d'eux. |
 | Habitat | `habitat` | Habitat élémentaire du plan de gestion d'un parc, identifié par son code habitat élémentaire, tel que l'écrivent les gestionnaires du parc : `1120-1` pour les herbiers à posidonie. |

@@ -2,6 +2,7 @@ import type {
   Cartographie,
   Config,
   Croisement,
+  Element,
   MultiPolygon,
 } from '@pnm/shared'
 import {data, type LoaderFunctionArgs} from 'react-router'
@@ -18,6 +19,12 @@ async function fetchConfig(): Promise<Config> {
 async function fetchTilesUrl(): Promise<string> {
   const {habitatsTilesUrl} = await fetchConfig()
   return new URL(habitatsTilesUrl, globalThis.location.href).href
+}
+
+// What the localisation of a projet meets. Asked once per visit for the same localisation, whichever
+// step asks
+export async function fetchCroisement(parc: string, localisation: readonly Element[]): Promise<Croisement> {
+  return postApi<Croisement>('/croisement', {parc, localisation})
 }
 
 // What the habitats step has to show
@@ -42,7 +49,7 @@ export async function loadHabitatsStep({params}: LoaderFunctionArgs): Promise<Ha
 
   try {
     const [croisement, perimetre, tilesUrl] = await Promise.all([
-      postApi<Croisement>('/croisement', {parc, localisation}),
+      fetchCroisement(parc, localisation),
       fetchPerimetre(parc),
       fetchTilesUrl(),
     ])

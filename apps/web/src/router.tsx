@@ -15,12 +15,13 @@ import {ActionPage} from './pages/action-page.tsx'
 import {EnjeuPage} from './pages/enjeu-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
 import {HomePage} from './pages/home-page.tsx'
-import {MesuresStepPage} from './pages/mesures-step-page.tsx'
 import {NotFoundPage} from './pages/not-found-page.tsx'
 import {PlanGestionLayout} from './pages/plan-gestion-layout.tsx'
 import {PlanGestionPage} from './pages/plan-gestion-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
 import {ProjetLayout} from './pages/projet-layout.tsx'
+import {RecommandationsStepPage} from './pages/recommandations-step-page.tsx'
+import {loadRecommandationsStep} from './recommandations.ts'
 import {
   fetchParcs,
   fetchPerimetre,
@@ -115,7 +116,7 @@ export const router = createBrowserRouter([
                       },
                     },
                   },
-                  {path: 'mesures', Component: MesuresStepPage},
+                  {path: 'recommandations', loader: loadRecommandationsStep, Component: RecommandationsStepPage},
                 ],
               },
               {
