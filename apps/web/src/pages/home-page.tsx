@@ -4,7 +4,7 @@ import {preparerProjetPath} from '../parcs.ts'
 
 const etapes = [
   'Sélectionner l\'activité et la zone concernée',
-  'Consulter les impacts et les mesures à mettre en place',
+  'Consulter les impacts et les recommandations du parc',
   'Consulter la documentation du parc',
   'Construire votre projet en tenant compte des enjeux du parc naturel marin',
 ]

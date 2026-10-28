@@ -1,12 +1,14 @@
 // The plan de gestion of each parc, from its Grist document: the enjeux of the parc with their
-// objectifs, its habitats and its actions. The tables that only sort the others give labels, not
-// entries: the sous-enjeux, the nomenclature of activités
+// objectifs, its habitats, its actions, the activités a porteur de projet can pick and the
+// recommandations to them. The tables that only sort the others give labels, not entries: the
+// sous-enjeux
 // npm run plan-gestion -w @pnm/pipelines
 import {mkdir, writeFile} from 'node:fs/promises'
 import {join} from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {
   type Action,
+  type Activite,
   type Enjeu,
   type Habitat,
   type PlanGestion,
@@ -26,6 +28,20 @@ const distDir = fileURLToPath(new URL('../../../data/dist/plan-de-gestion/', imp
 
 function isUrl(value: string): boolean {
   return /^https?:\/\//v.test(value)
+}
+
+// The values that a list of Grist ids refers to. An id that the plan does not hold stops here: left
+// out, it would widen a recommandation to more projets
+function lookUp<T>(ids: readonly number[], values: ReadonlyMap<number, T>, what: string): T[] {
+  return ids.map(id => {
+    const value = values.get(id)
+
+    if (value === undefined) {
+      throw new Error(`${what}: ${id} is not in the plan de gestion`)
+    }
+
+    return value
+  })
 }
 
 async function readPlan(source: GristSource): Promise<PlanGestion> {
@@ -51,14 +67,13 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     readRecords('Indicateurs'),
     readRecords('Habitats'),
     readRecords('Actions_recupere_depuis_EVA_'),
-    readRecords('Recommandation'),
-    readRecords('Activites2'),
+    readRecords('Recommandations_MPM_'),
+    readRecords('Activites_MPM_'),
     readRecords('Guide_d_utilisation'),
   ])
 
   // Grist refers to a record by its id, which these tables also hold as their own id
   const objectifEnjeu = new Map(objectifs.map(({id, fields}) => [id, ref(fields.id_enjeu)]))
-  const activiteNoms = new Map(activites.map(({id, fields}) => [id, text(fields.Libelle_niveau1_Act)]))
 
   const planEnjeux: Enjeu[] = enjeux.map(enjeu => ({
     id: enjeu.id,
@@ -84,8 +99,8 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     })),
   }))
 
-  const planHabitats: Habitat[] = habitats.flatMap(habitat => {
-    const {fields} = habitat
+  // With their Grist id, which the recommandations refer to
+  const keptHabitats: Array<{id: number, habitat: Habitat}> = habitats.flatMap(({id, fields}) => {
     const code = text(fields.Code_habitat_elementaire)
     const nom = text(fields.Habitat_elementaire)
 
@@ -95,36 +110,49 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
 
     const codeGenerique = text(fields.Code_habitat_generique)
     const nomGenerique = text(fields.Habitat_generique)
-    const habitatRecommandations: Recommandation[] = recommandations
-      .filter(recommandation => ref(recommandation.fields.Fiche_habitat_Especes) === habitat.id)
-      .flatMap(({fields: recommandation}) => {
-        const reco = text(recommandation.Reco)
-        const avis = text(recommandation.Avis)
-
-        if (reco === undefined && avis === undefined) {
-          return []
-        }
-
-        const activite = ref(recommandation.Activite)
-
-        return [{
-          activite: activite === undefined ? undefined : activiteNoms.get(activite),
-          // A recommandation is either written out, or a link to where it is
-          texte: reco === undefined || isUrl(reco) ? undefined : reco,
-          lien: reco !== undefined && isUrl(reco) ? reco : undefined,
-          avis: avis !== undefined && isUrl(avis) ? avis : undefined,
-        }]
-      })
 
     return [{
-      code,
-      nom,
-      habitatGenerique: codeGenerique === undefined || nomGenerique === undefined
-        ? undefined
-        : {code: codeGenerique, nom: nomGenerique},
-      synthese: text(fields.Synthese_habitat),
-      sousObjectif: ref(fields.Simplifie_sousobjectif),
-      recommandations: habitatRecommandations,
+      id,
+      habitat: {
+        code,
+        nom,
+        habitatGenerique: codeGenerique === undefined || nomGenerique === undefined
+          ? undefined
+          : {code: codeGenerique, nom: nomGenerique},
+        synthese: text(fields.Synthese_habitat),
+        sousObjectif: ref(fields.Simplifie_sousobjectif),
+      },
+    }]
+  })
+  const habitatCodes = new Map(keptHabitats.map(({id, habitat}) => [id, habitat.code]))
+
+  const planActivites: Activite[] = activites.flatMap(({id, fields}) => {
+    const nom = text(fields.Nom_de_l_activite)
+    return nom === undefined
+      ? []
+      : [{
+        id,
+        nom,
+        description: text(fields.Description),
+        pictogramme: text(fields.Pictogramme),
+      }]
+  })
+  const activiteIds = new Map(planActivites.map(({id}) => [id, id]))
+
+  const planRecommandations: Recommandation[] = recommandations.flatMap(({id, fields}) => {
+    const description = text(fields.Description)
+
+    if (description === undefined) {
+      return []
+    }
+
+    return [{
+      id,
+      titre: text(fields.Titre),
+      description,
+      enjeu: ref(fields.Enjeu),
+      activites: lookUp(refList(fields.Activites), activiteIds, `Recommandation ${id}, activités`),
+      habitats: lookUp(refList(fields.Habitats), habitatCodes, `Recommandation ${id}, habitats`),
     }]
   })
 
@@ -158,8 +186,10 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
   return planGestionSchema.parse({
     document,
     enjeux: planEnjeux,
-    habitats: planHabitats,
+    habitats: keptHabitats.map(({habitat}) => habitat),
     actions: planActions,
+    activites: planActivites,
+    recommandations: planRecommandations,
   })
 }
 
@@ -180,5 +210,13 @@ for (const source of plansGestion) {
   // eslint-disable-next-line no-await-in-loop
   await writeFile(file, JSON.stringify(plan, undefined, 2) + '\n')
   const sousObjectifCount = plan.enjeux.flatMap(enjeu => enjeu.objectifs.flatMap(objectif => objectif.sousObjectifs)).length
-  console.log(`${file}: ${plan.enjeux.length} enjeux, ${sousObjectifCount} sous-objectifs, ${plan.habitats.length} habitats, ${plan.actions.length} actions`)
+  const counts = [
+    `${plan.enjeux.length} enjeux`,
+    `${sousObjectifCount} sous-objectifs`,
+    `${plan.habitats.length} habitats`,
+    `${plan.actions.length} actions`,
+    `${plan.activites.length} activités`,
+    `${plan.recommandations.length} recommandations`,
+  ]
+  console.log(`${file}: ${counts.join(', ')}`)
 }

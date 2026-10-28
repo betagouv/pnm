@@ -1,6 +1,5 @@
 import type {Config} from '@pnm/shared'
 import express from 'express'
-import {createActivitesRouter} from './activites.ts'
 import {createCroisementRouter} from './croisement.ts'
 import {createHabitatsData, createHabitatsRouter, habitatsTilesFile} from './habitats.ts'
 import {createParcsRouter, parcs} from './parcs.ts'
@@ -41,7 +40,6 @@ export async function createApiRouter({dataUrl, publicDataUrl}: ApiOptions): Pro
     response.json(config)
   })
 
-  router.use('/activites', createActivitesRouter())
   router.use('/croisement', createCroisementRouter(habitats, plans))
   router.use('/habitats', createHabitatsRouter(habitats))
   router.use('/parcs', createParcsRouter(plans))

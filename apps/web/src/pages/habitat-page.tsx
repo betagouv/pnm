@@ -1,8 +1,8 @@
 import {CallOut} from '@codegouvfr/react-dsfr/CallOut'
-import type {Recommandation} from '@pnm/shared'
 import {Link, useLoaderData, useParams} from 'react-router'
 import {HabitatMap} from '../components/habitat-map.tsx'
 import {PlanText} from '../components/plan-text.tsx'
+import {RecommandationCards} from '../components/recommandation-cards.tsx'
 import type {HabitatPageData} from '../habitats.ts'
 import {useParc} from '../parcs.ts'
 import {
@@ -21,6 +21,13 @@ export function HabitatPage() {
   // The route answers 404 for a habitat that the plan does not hold
   const habitat = findHabitat(plan, useParams().code)!
   const place = habitat.sousObjectif === undefined ? undefined : findSousObjectif(plan, habitat.sousObjectif)
+  const recommandations = plan.recommandations.filter(recommandation => recommandation.habitats.includes(habitat.code))
+  const activiteNoms = new Map(plan.activites.map(activite => [activite.id, activite.nom]))
+  // A recommandation meant for activités says which ones
+  const details = new Map(recommandations.flatMap(recommandation => {
+    const noms = recommandation.activites.flatMap(id => activiteNoms.get(id) ?? [])
+    return noms.length === 0 ? [] : [[recommandation.id, `Pour : ${noms.join(', ')}`] as const]
+  }))
 
   return (
     <>
@@ -51,14 +58,10 @@ export function HabitatPage() {
         </p>
       )}
 
-      {habitat.recommandations.length > 0 && (
+      {recommandations.length > 0 && (
         <>
           <h2 className='fr-mt-6w'>Recommandations</h2>
-          <ul>
-            {habitat.recommandations.map(recommandation => (
-              <RecommandationItem key={recommandationKey(recommandation)} recommandation={recommandation} />
-            ))}
-          </ul>
+          <RecommandationCards recommandations={recommandations} enjeux={plan.enjeux} details={details} titleAs='h3' />
         </>
       )}
 
@@ -75,35 +78,5 @@ export function HabitatPage() {
         )
         : <p>Mon Parc Marin n'a pas encore de cartographie de cet habitat.</p>}
     </>
-  )
-}
-
-function recommandationKey({activite, texte, lien, avis}: Recommandation): string {
-  return [activite, texte, lien, avis].join('|')
-}
-
-type RecommandationItemProps = {
-  readonly recommandation: Recommandation
-}
-
-function RecommandationItem({recommandation}: RecommandationItemProps) {
-  return (
-    <li>
-      {recommandation.activite !== undefined && <span className='fr-text--bold'>{`${recommandation.activite} : `}</span>}
-      {recommandation.texte}
-      {recommandation.lien !== undefined && (
-        <a href={recommandation.lien} target='_blank' rel='noopener noreferrer' title='Voir la recommandation - nouvelle fenêtre'>
-          Voir la recommandation
-        </a>
-      )}
-      {recommandation.avis !== undefined && (
-        <>
-          {' '}
-          <a href={recommandation.avis} target='_blank' rel='noopener noreferrer' title='Lire l’avis - nouvelle fenêtre'>
-            Lire l'avis
-          </a>
-        </>
-      )}
-    </li>
   )
 }

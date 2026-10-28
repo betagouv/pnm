@@ -1,7 +1,7 @@
 import {z} from 'zod'
-import {activiteSchema} from './activites.ts'
 import {positionSchema} from './geometries.ts'
 import {parcSchema} from './parcs.ts'
+import {activiteSchema} from './plan-gestion.ts'
 
 // In meters
 const distanceSchema = z.number().int().min(0)

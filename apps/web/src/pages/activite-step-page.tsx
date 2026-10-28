@@ -26,7 +26,7 @@ export function ActiviteStepPage() {
       return
     }
 
-    saveProjet({...projet, parc: parc.id, activite})
+    saveProjet({...projet, parc: parc.id, activite: Number(activite)})
     // Keeps the scroll position, like the other links between steps
     void navigate(projetStepPath(parc.id, 'localisation'), {preventScrollReset: true})
   }

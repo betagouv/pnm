@@ -15,12 +15,13 @@ import {ActionPage} from './pages/action-page.tsx'
 import {EnjeuPage} from './pages/enjeu-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
 import {HomePage} from './pages/home-page.tsx'
-import {MesuresStepPage} from './pages/mesures-step-page.tsx'
 import {NotFoundPage} from './pages/not-found-page.tsx'
 import {PlanGestionLayout} from './pages/plan-gestion-layout.tsx'
 import {PlanGestionPage} from './pages/plan-gestion-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
 import {ProjetLayout} from './pages/projet-layout.tsx'
+import {RecommandationsStepPage} from './pages/recommandations-step-page.tsx'
+import {loadRecommandationsStep} from './recommandations.ts'
 import {
   fetchParcs,
   fetchPerimetre,
@@ -34,7 +35,7 @@ import {
   loadPlanGestion,
   planGestionRouteId,
 } from './plan-gestion.ts'
-import {fetchActivites, projetRouteId, projetStepPath} from './projet.ts'
+import {loadActivites, projetRouteId, projetStepPath} from './projet.ts'
 
 async function loadParc({params}: LoaderFunctionArgs): Promise<Parc> {
   const parcs = await fetchParcs()
@@ -89,7 +90,7 @@ export const router = createBrowserRouter([
               {
                 id: projetRouteId,
                 path: 'preparer-mon-projet',
-                loader: fetchActivites,
+                loader: loadActivites,
                 Component: ProjetLayout,
                 children: [
                   {index: true, loader: ({params}) => redirect(projetStepPath(params.parcId!, 'activite'))},
@@ -115,7 +116,7 @@ export const router = createBrowserRouter([
                       },
                     },
                   },
-                  {path: 'mesures', Component: MesuresStepPage},
+                  {path: 'recommandations', loader: loadRecommandationsStep, Component: RecommandationsStepPage},
                 ],
               },
               {

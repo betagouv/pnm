@@ -8,7 +8,7 @@ type ActiviteRadiosProps = {
   readonly activites: readonly Activite[]
   readonly legend: ReactNode
   readonly name: string
-  readonly defaultValue?: string
+  readonly defaultValue?: number
   readonly errorMessage?: string
   readonly onChange?: () => void
 }
@@ -28,7 +28,7 @@ export function ActiviteRadios({
       state={errorMessage === undefined ? 'default' : 'error'}
       stateRelatedMessage={errorMessage}
       options={activites.map(activite => {
-        const url = pictogramUrl(activite.pictogramme)
+        const url = activite.pictogramme === undefined ? undefined : pictogramUrl(activite.pictogramme)
         return {
           label: activite.nom,
           hintText: activite.description,
