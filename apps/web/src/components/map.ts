@@ -26,6 +26,14 @@ export const elementColor = fr.colors.getHex({isDark: false}).options.orangeTerr
 export const outlineColor = '#ffffff'
 // The colour of a habitat, on the map as on its cards
 export const habitatColor = fr.colors.getHex({isDark: false}).options.greenEmeraude.main632.default
+// The colours of the habitats when a map shows several, in turn
+export const habitatColors = [
+  habitatColor,
+  fr.colors.getHex({isDark: false}).options.yellowTournesol.main731.default,
+  fr.colors.getHex({isDark: false}).options.purpleGlycine.main494.default,
+  fr.colors.getHex({isDark: false}).options.pinkMacaron.main689.default,
+  fr.colors.getHex({isDark: false}).options.blueCumulus.main526.default,
+] as const
 
 // IGN aerial photographs, from the Géoplateforme
 const style: NonNullable<MapOptions['style']> = {
