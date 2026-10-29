@@ -11,6 +11,11 @@ export function parcPath(parcId: string, section = 'preparer-mon-projet'): strin
   return `/parcs/${parcId}/${section}`
 }
 
+// The home page of the parc
+export function parcHomePath(parcId: string): string {
+  return `/parcs/${parcId}`
+}
+
 export async function fetchParcs(): Promise<Parc[]> {
   return fetchApi<Parc[]>('/parcs')
 }

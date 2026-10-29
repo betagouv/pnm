@@ -59,6 +59,43 @@ Le parc choisi est porté par l'adresse : `/parcs/<parc>/<section>`, par exemple
 d'en changer en restant dans la même section. Les futures sections (actualités, carte
 interactive) conserveront ainsi le parc choisi.
 
+## Accueil du parc
+
+Chaque parc a sa page d'accueil, à `/parcs/<parc>`, d'après la maquette de la designeuse.
+Quand un parc est affiché, l'entrée « Accueil » du menu mène à sa page d'accueil ; sinon, à
+l'accueil du site. Choisir un parc dans le menu hors d'une section mène aussi à sa page d'accueil.
+
+- **« Un projet dans le Parc ? »** : à qui s'adresse le service, la mise en garde sur l'étude de
+  terrain, puis le bouton « Préparer / Évaluer un projet » vers le parcours. Le nom complet du parc
+  précède le titre, et son logo l'accompagne.
+- **Les grandes étapes** pour adapter un projet aux enjeux du Parc, chacune sous son illustration.
+- **Missions et objectifs du Parc** : trois missions, chacune avec un pictogramme du DSFR, et une
+  photo du parc.
+- **Les dernières actualités** : trois cartes (cards) DSFR, avec leur catégorie, leur date et un
+  pictogramme en guise d'image. Leur source n'est pas choisie : la page montre des actualités
+  inventées pour le Cap Corse (`apps/web/src/exemple-actualites.ts`), avec un badge « Contenu
+  d'exemple ».
+
+Le logo et la photo d'un parc sont désignés dans `apps/api/src/parcs.json` (`logo`, `photo`) par
+leur adresse sur le site ; les fichiers sont dans `apps/web/public/parcs/<parc>/`. Un parc sans
+logo ni photo a la même page, sans ces images. Le texte de la page vaut pour tous les parcs.
+
+Écarts à la maquette :
+
+- l'en-tête propre au parc (« Parc naturel marin / Cap Corse Agriate ») et son menu (« Découvrir
+  les enjeux du Parc », « Les travaux du Parc », « Données ») ne sont pas repris : le site garde
+  son en-tête et son menu ;
+- la phrase « Le Parc naturel marin réunit », inachevée, n'est pas reprise ;
+- les emplacements d'image des missions sont des pictogrammes du DSFR (`environment/leaf`,
+  `environment/human-cooperation`, `leisure/community`).
+
+Questions ouvertes :
+
+- La source des actualités de chaque parc.
+- Le texte de la page est-il propre à chaque parc ? Il faudrait alors le porter dans les données.
+- La légende de la photo du Cap Corse (l'île de la Giraglia ?) : **à confirmer**. Elle est
+  décorative en attendant.
+
 ## Le parcours en quatre étapes
 
 Chaque étape a sa propre adresse : `/parcs/<parc>/preparer-mon-projet/<étape>`, avec

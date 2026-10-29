@@ -8,6 +8,10 @@ export const parcSchema = z.object({
   disponible: z.boolean(),
   // Identifier of the protected area in the national register (INPN), e.g. "FR9100008"
   mnhnId: z.string().regex(/^FR\d{7}$/v),
+  // Its logo and a photo of it, for its home page, as addresses on the site:
+  // "/parcs/cap-corse-agriate/logo.png"
+  logo: z.string().startsWith('/').optional(),
+  photo: z.string().startsWith('/').optional(),
 })
 
 export const parcsSchema = z
