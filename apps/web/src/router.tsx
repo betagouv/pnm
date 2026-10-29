@@ -16,6 +16,7 @@ import {EnjeuPage} from './pages/enjeu-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
 import {HomePage} from './pages/home-page.tsx'
 import {NotFoundPage} from './pages/not-found-page.tsx'
+import {ParcHomePage} from './pages/parc-home-page.tsx'
 import {PlanGestionLayout} from './pages/plan-gestion-layout.tsx'
 import {PlanGestionPage} from './pages/plan-gestion-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
@@ -25,7 +26,6 @@ import {loadRecommandationsStep} from './recommandations.ts'
 import {
   fetchParcs,
   fetchPerimetre,
-  parcPath,
   parcRouteId,
   parcsRouteId,
 } from './parcs.ts'
@@ -86,7 +86,7 @@ export const router = createBrowserRouter([
             path: 'parcs/:parcId',
             loader: loadParc,
             children: [
-              {index: true, loader: ({params}) => redirect(parcPath(params.parcId!))},
+              {index: true, Component: ParcHomePage},
               {
                 id: projetRouteId,
                 path: 'preparer-mon-projet',

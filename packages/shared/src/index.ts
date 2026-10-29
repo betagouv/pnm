@@ -1,3 +1,4 @@
+export * from './actualites.ts'
 export * from './config.ts'
 export * from './croisement.ts'
 export * from './geometries.ts'

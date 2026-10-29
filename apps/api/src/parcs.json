@@ -45,7 +45,9 @@
     "nomComplet": "Parc naturel marin du Cap Corse et de l'Agriate",
     "localisation": "Méditerranée",
     "disponible": true,
-    "mnhnId": "FR9100008"
+    "mnhnId": "FR9100008",
+    "logo": "/parcs/cap-corse-agriate/logo.png",
+    "photo": "/parcs/cap-corse-agriate/photo.jpg"
   },
   {
     "id": "mayotte",

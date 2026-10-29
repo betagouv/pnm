@@ -7,6 +7,7 @@ import {
 } from 'react-router'
 import {PageLayout} from './components/page-layout.tsx'
 import {
+  parcHomePath,
   parcPath,
   preparerProjetPath,
   useParc,
@@ -21,10 +22,11 @@ export function AppLayout() {
   const section = useMatch('/parcs/:parcId/:section/*')?.params.section
 
   const navigation: MainNavigationProps.Item[] = [
+    // The home page of the parc in view, if any
     {
       text: 'Accueil',
-      linkProps: {to: '/'},
-      isActive: pathname === '/',
+      linkProps: {to: parc ? parcHomePath(parc.id) : '/'},
+      isActive: pathname === '/' || (parc !== undefined && section === undefined),
     },
     {
       text: parc?.nom ?? 'Choisir un parc',
@@ -33,7 +35,7 @@ export function AppLayout() {
           .filter(candidate => candidate.disponible)
           .map(candidate => ({
             text: candidate.nom,
-            linkProps: {to: parcPath(candidate.id, section)},
+            linkProps: {to: section === undefined ? parcHomePath(candidate.id) : parcPath(candidate.id, section)},
             isActive: candidate.id === parc?.id,
           })),
         {text: 'Tous les parcs', linkProps: {to: preparerProjetPath}},
