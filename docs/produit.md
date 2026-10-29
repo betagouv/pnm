@@ -3,6 +3,7 @@
 ## En bref
 
 - **Nom** : *Mon Parc Marin* (provisoire).
+- **Sous-titre**, sous le nom dans l'en-tête : « Outil d'aide à la décision et à l'action ».
 - **Commanditaire** : Office français de la biodiversité (OFB).
 - **Objet** : informer les porteurs de projet au regard des parcs naturels marins.
 - **Accès** : public, sans authentification.

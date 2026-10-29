@@ -82,9 +82,10 @@ logo ni photo a la même page, sans ces images. Le texte de la page vaut pour to
 
 Écarts à la maquette :
 
-- l'en-tête propre au parc (« Parc naturel marin / Cap Corse Agriate ») et son menu (« Découvrir
-  les enjeux du Parc », « Les travaux du Parc », « Données ») ne sont pas repris : le site garde
-  son en-tête et son menu ;
+- le titre propre au parc dans l'en-tête (« Parc naturel marin / Cap Corse Agriate ») et son menu
+  (« Découvrir les enjeux du Parc », « Les travaux du Parc », « Données ») ne sont pas repris : le
+  site garde son titre et son menu. Son sous-titre, « Outil d'aide à la décision et à l'action »,
+  est devenu celui du site ;
 - la phrase « Le Parc naturel marin réunit », inachevée, n'est pas reprise ;
 - les emplacements d'image des missions sont des pictogrammes du DSFR (`environment/leaf`,
   `environment/human-cooperation`, `leisure/community`).

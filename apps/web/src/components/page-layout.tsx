@@ -45,7 +45,7 @@ export function PageLayout({navigation, children}: PageLayoutProps) {
         homeLinkProps={homeLinkProps}
         operatorLogo={operatorLogo}
         serviceTitle='Mon Parc Marin'
-        serviceTagline='Votre projet dans un parc naturel marin'
+        serviceTagline="Outil d'aide à la décision et à l'action"
         navigation={navigation}
       />
       <main id='contenu' tabIndex={-1}>
