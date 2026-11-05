@@ -10,7 +10,7 @@
 3. **Parcours guidé** dans le parc choisi, en quatre étapes :
    1. **Votre activité** ;
    2. **Localisation du projet** ;
-   3. **Habitats concernés** ;
+   3. **Enjeux concernés** ;
    4. **Recommandations**.
 
 ## Accueil
@@ -100,7 +100,7 @@ Questions ouvertes :
 ## Le parcours en quatre étapes
 
 Chaque étape a sa propre adresse : `/parcs/<parc>/preparer-mon-projet/<étape>`, avec
-`activite`, `localisation`, `habitats` et `recommandations`. Un bandeau commun rappelle le parc et
+`activite`, `localisation`, `enjeux` et `recommandations`. Un bandeau commun rappelle le parc et
 porte l'indicateur d'étapes du DSFR. En bas de page, « Retour » et « Continuer » passent d'une étape
 à l'autre. La page ne saute pas en haut : l'indicateur d'étapes revient dans l'écran en douceur
 s'il en était sorti, et son titre prend le focus pour que les lecteurs d'écran annoncent l'étape.
@@ -184,23 +184,37 @@ Questions ouvertes :
   localisation du projet : à renommer ?
 - Quelles autres informations décrivent le projet ?
 
-### 3. Habitats concernés
+### 3. Enjeux concernés
 
-Une fois la localisation validée, l'étape montre les habitats que rencontre le projet, d'après le
-croisement de sa localisation par l'API. Sans localisation, elle renvoie à l'étape 2.
+Une fois la localisation validée, l'étape montre les enjeux que rencontre le projet. Sans
+localisation, elle renvoie à l'étape 2.
 
-- La surface couverte par le projet, puis une carte (card) DSFR par habitat, en deux groupes :
-  **dans votre zone de projet** et **à proximité** (à moins de la tolérance du croisement).
-- Chaque carte donne la part du projet dans l'habitat et sa surface, avec une jauge à la couleur
-  de l'habitat, ou sa distance au projet. Quand le projet a plusieurs éléments, elle dit lesquels
-  sont concernés.
-- Sous les cartes, la part du projet qui ne recoupe aucun habitat connu.
-- Choisir une carte (un bouton) affiche à côté, ou dessous sur mobile, l'aperçu de l'habitat par
-  rapport au projet : ses chiffres, la carte de l'habitat sur la zone du projet, lue dans les
-  PMTiles des habitats, avec une légende, le début de sa présentation et un lien vers sa fiche.
-  L'habitat qui prend la plus grande part du projet est choisi d'emblée. Les contours de l'habitat
-  sont élargis et simplifiés par la chaîne : l'aperçu le dit.
-- Si l'API ne peut pas croiser la localisation, l'étape le signale et laisse continuer.
+Trois enjeux, dans cet ordre : **Gouvernance**, **Habitats** et **Espèces**. Chacun est une carte
+(card) DSFR, qui est un bouton : la choisir affiche l'enjeu à côté, ou dessous sur mobile. La carte
+résume ce que le projet rencontre (« 2 habitats dans votre zone »). Habitats est choisi d'emblée.
+
+Gouvernance et Espèces attendent leurs données : chacun dit, sous un badge « À venir », ce qu'il
+montrera. Ce que recouvre la gouvernance (zones de gouvernance du croisement ?) est **à
+confirmer**.
+
+Habitats montre tous les habitats que rencontre le projet, d'après le croisement de sa localisation
+par l'API :
+
+- La surface couverte par le projet, puis une étiquette (tag) sélectionnable du DSFR par habitat,
+  en deux groupes : **dans votre zone de projet** et **à proximité** (à moins de la tolérance du
+  croisement).
+- Une carte de tous ces habitats sur la zone du projet, chacun dans sa couleur, lue dans les
+  PMTiles des habitats, avec une légende. Les contours des habitats sont élargis et simplifiés par
+  la chaîne : la page le dit.
+- Choisir une étiquette met son habitat en surbrillance sur la carte : les autres s'estompent.
+  Dessous viennent sa distance s'il est à proximité, les éléments du projet qu'il concerne quand il
+  y en a plusieurs, le début de sa présentation et un lien vers sa fiche. La choisir de nouveau la
+  retire de la surbrillance.
+- Ni la part du projet dans chaque habitat, ni sa surface, ni la part hors habitat ne sont
+  affichées.
+- Le script du DSFR bascule de lui-même une étiquette pressée quand on la clique : le clic est
+  arrêté avant de l'atteindre, et c'est React qui garde le choix.
+- Si l'API ne peut pas croiser la localisation, Habitats le signale et l'étape laisse continuer.
 
 ### 4. Recommandations
 

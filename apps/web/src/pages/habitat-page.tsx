@@ -69,7 +69,7 @@ export function HabitatPage() {
       {isMapped
         ? (
           <>
-            <HabitatMap habitat={habitat} tilesUrl={tilesUrl} perimetre={perimetre} />
+            <HabitatMap habitats={[habitat]} tilesUrl={tilesUrl} perimetre={perimetre} />
             <p className='fr-text--xs fr-mt-1w fr-mb-0'>
               Les contours de l'habitat sont élargis et simplifiés : ils montrent où il se trouve, pas
               sa limite exacte. Source : cartographies des habitats de l'OFB.

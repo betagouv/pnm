@@ -52,7 +52,7 @@ export function RecommandationsStepPage() {
       <p className='fr-text--xs fr-mt-4w fr-mb-0'>
         Source : plan de gestion du parc.
       </p>
-      <StepNavigation previous={projetStepPath(parc.id, 'habitats')} />
+      <StepNavigation previous={projetStepPath(parc.id, 'enjeux')} />
     </>
   )
 }

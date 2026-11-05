@@ -107,12 +107,12 @@ export const router = createBrowserRouter([
                     },
                   },
                   {
-                    path: 'habitats',
+                    path: 'enjeux',
                     loader: loadHabitatsStep,
                     lazy: {
                       async Component() {
-                        const {HabitatsStepPage} = await import('./pages/habitats-step-page.tsx')
-                        return HabitatsStepPage
+                        const {EnjeuxStepPage} = await import('./pages/enjeux-step-page.tsx')
+                        return EnjeuxStepPage
                       },
                     },
                   },
