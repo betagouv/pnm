@@ -41,7 +41,7 @@ function mapTitle(habitat: Habitat, hasProjet: boolean): string {
 // MapLibre reads pmtiles:// sources through this protocol, added once
 let isProtocolAdded = false
 
-function addPmtilesProtocol(): void {
+export function addPmtilesProtocol(): void {
   if (isProtocolAdded) {
     return
   }
@@ -162,7 +162,7 @@ type LegendItemProps = {
   readonly isDashed?: boolean
 }
 
-function LegendItem({label, color, isDashed = false}: LegendItemProps) {
+export function LegendItem({label, color, isDashed = false}: LegendItemProps) {
   return (
     <li className='fr-text--sm fr-mb-0 fr-mr-3w'>
       <span

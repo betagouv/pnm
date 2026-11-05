@@ -22,10 +22,19 @@ import {
 } from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 
-export const elementColor = fr.colors.getHex({isDark: false}).options.orangeTerreBattue.main645.default
+const colorOptions = fr.colors.getHex({isDark: false}).options
+
+export const elementColor = colorOptions.orangeTerreBattue.main645.default
 export const outlineColor = '#ffffff'
-// The colour of a habitat, on the map as on its cards
-export const habitatColor = fr.colors.getHex({isDark: false}).options.greenEmeraude.main632.default
+// The colours of the habitats when a map shows several, in turn; the first when it shows one
+export const habitatColors = [
+  colorOptions.greenEmeraude.main632.default,
+  colorOptions.yellowTournesol.main731.default,
+  colorOptions.purpleGlycine.main494.default,
+  colorOptions.pinkMacaron.main689.default,
+  colorOptions.blueCumulus.main526.default,
+] as const
+export const habitatColor = habitatColors[0]
 
 // IGN aerial photographs, from the Géoplateforme
 const style: NonNullable<MapOptions['style']> = {
@@ -154,6 +163,8 @@ type CreateMapOptions = {
   readonly title: string
   readonly bounds: Bounds
   readonly fitBoundsOptions: MapOptions['fitBoundsOptions']
+  // A map that only illustrates the page stays where it is
+  readonly isInteractive?: boolean
 }
 
 export function createMap({
@@ -161,6 +172,7 @@ export function createMap({
   title,
   bounds,
   fitBoundsOptions,
+  isInteractive = true,
 }: CreateMapOptions): MapLibreMap {
   // Once bundled, MapLibre would look for its worker next to itself, where it is not
   setWorkerUrl(workerUrl)
@@ -170,19 +182,24 @@ export function createMap({
     style,
     bounds,
     fitBoundsOptions,
+    interactive: isInteractive,
     // A map that does not rotate or tilt is easier to read
     dragRotate: false,
     pitchWithRotate: false,
     touchPitch: false,
     maxPitch: 0,
     // The page scrolls with one finger or the wheel; the map with two fingers or Ctrl
-    cooperativeGestures: true,
+    cooperativeGestures: isInteractive,
     locale: {...locale, 'Map.Title': title},
     attributionControl: {compact: true},
   })
   map.touchZoomRotate.disableRotation()
   map.keyboard.disableRotation()
-  map.addControl(new NavigationControl({showCompass: false}))
+
+  if (isInteractive) {
+    map.addControl(new NavigationControl({showCompass: false}))
+  }
+
   map.addControl(new ScaleControl({unit: 'metric'}), 'bottom-left')
 
   return map

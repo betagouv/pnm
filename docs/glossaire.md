@@ -27,7 +27,10 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Habitat générique | `habitatGenerique` | Habitat de la typologie Natura 2000 qui regroupe des habitats élémentaires : `1120` pour les herbiers de Posidonia. |
 | Objectif à long terme | `objectifLongTerme` | Objectif du plan de gestion d'un parc, décliné en sous-objectifs. Un habitat relève de l'un d'eux. |
 | Habitat | `habitat` | Habitat élémentaire du plan de gestion d'un parc, identifié par son code habitat élémentaire, tel que l'écrivent les gestionnaires du parc : `1120-1` pour les herbiers à posidonie. |
+| Réglementation | `reglementation` | Les règles qui s'appliquent dans un parc. Sources à choisir : la synthèse du projet en montre pour l'instant un exemple. |
+| Règle | `regle` | Règle de la réglementation, avec son niveau : interdiction, avis conforme, autorisation, déclaration. Comme une recommandation, elle peut viser des activités et des habitats. |
+| Niveau de règle | `niveauRegle` | Ce qu'une règle demande au projet, de l'interdiction à la déclaration. |
 | Croisement | `croisement` | Ce que rencontre la localisation d'un projet : habitats, et plus tard espèces et zones de gouvernance, avec les surfaces et les distances. |
-| Espèce | `espece` | Espèce, identifiée par `cdnom` (référentiel TAXREF). |
+| Espèce | `espece` | Espèce, identifiée par `cdnom` (référentiel TAXREF). Elle peut vivre dans des habitats ; son statut dit sa protection (« Protégée »). Sources à choisir : la synthèse du projet en montre pour l'instant un exemple, sans `cdnom`. |
 | Mesure ERC | `mesureErc` | Mesure pour Éviter, Réduire ou Compenser un impact. |
 | Référentiel | `referentiel` | Jeu de données de référence préparé par les traitements et publié sur S3. |

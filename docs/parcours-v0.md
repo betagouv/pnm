@@ -7,11 +7,10 @@
 1. **Accueil.** La page explique à quoi sert le service et présente les grandes étapes. Un
    bouton « Préparer mon projet » s'adresse aux porteurs de projet.
 2. **Préparer mon projet.** Le porteur choisit d'abord le parc naturel marin concerné.
-3. **Parcours guidé** dans le parc choisi, en quatre étapes :
+3. **Parcours guidé** dans le parc choisi, en trois étapes :
    1. **Votre activité** ;
    2. **Localisation du projet** ;
-   3. **Habitats concernés** ;
-   4. **Recommandations**.
+   3. **Synthèse pour votre projet**.
 
 ## Accueil
 
@@ -59,10 +58,10 @@ Le parc choisi est porté par l'adresse : `/parcs/<parc>/<section>`, par exemple
 d'en changer en restant dans la même section. Les futures sections (actualités, carte
 interactive) conserveront ainsi le parc choisi.
 
-## Le parcours en quatre étapes
+## Le parcours en trois étapes
 
 Chaque étape a sa propre adresse : `/parcs/<parc>/preparer-mon-projet/<étape>`, avec
-`activite`, `localisation`, `habitats` et `recommandations`. Un bandeau commun rappelle le parc et
+`activite`, `localisation` et `synthese`. Un bandeau commun rappelle le parc et
 porte l'indicateur d'étapes du DSFR. En bas de page, « Retour » et « Continuer » passent d'une étape
 à l'autre. La page ne saute pas en haut : l'indicateur d'étapes revient dans l'écran en douceur
 s'il en était sorti, et son titre prend le focus pour que les lecteurs d'écran annoncent l'étape.
@@ -146,47 +145,70 @@ Questions ouvertes :
   localisation du projet : à renommer ?
 - Quelles autres informations décrivent le projet ?
 
-### 3. Habitats concernés
+### 3. Synthèse pour votre projet
 
-Une fois la localisation validée, l'étape montre les habitats que rencontre le projet, d'après le
-croisement de sa localisation par l'API. Sans localisation, elle renvoie à l'étape 2.
+Une fois la localisation validée, une seule page réunit ce qui concerne le projet : la
+réglementation, les habitats, les espèces et les recommandations. Sans localisation, elle renvoie
+à l'étape 2. L'information se lit dans le texte ; la carte ne fait que l'illustrer.
 
-- La surface couverte par le projet, puis une carte (card) DSFR par habitat, en deux groupes :
-  **dans votre zone de projet** et **à proximité** (à moins de la tolérance du croisement).
-- Chaque carte donne la part du projet dans l'habitat et sa surface, avec une jauge à la couleur
-  de l'habitat, ou sa distance au projet. Quand le projet a plusieurs éléments, elle dit lesquels
-  sont concernés.
-- Sous les cartes, la part du projet qui ne recoupe aucun habitat connu.
-- Choisir une carte (un bouton) affiche à côté, ou dessous sur mobile, l'aperçu de l'habitat par
-  rapport au projet : ses chiffres, la carte de l'habitat sur la zone du projet, lue dans les
-  PMTiles des habitats, avec une légende, le début de sa présentation et un lien vers sa fiche.
-  L'habitat qui prend la plus grande part du projet est choisi d'emblée. Les contours de l'habitat
-  sont élargis et simplifiés par la chaîne : l'aperçu le dit.
-- Si l'API ne peut pas croiser la localisation, l'étape le signale et laisse continuer.
+- En tête, l'activité et la localisation en mots (« boucle de 6,8 km et 2 lieux, 69 ha »), chacune
+  avec un lien pour la modifier, puis un sommaire DSFR « En bref » : une ligne par rubrique, avec
+  ce qu'elle compte (« 3 règles, dont 1 interdiction »), qui mène à la rubrique.
+- Quatre rubriques, dans cet ordre (**à confirmer**) : **réglementation**, ce qui s'impose ;
+  **habitats**, ce que le projet rencontre ; **espèces** ; **recommandations**, ce que le parc
+  conseille. Chacune est une liste de lignes, plus courtes que des cartes (cards) : un titre, un
+  badge ou une étiquette, une description, et pourquoi la ligne vaut pour le projet.
+- **Pourquoi elle vaut pour le projet** : le même vocabulaire dans toutes les rubriques, du plus
+  précis au plus général. *Dans votre zone* ou *à proximité* nomme les habitats en cause ; seules
+  ces lignes ont une place sur la carte, et une épingle le signale. *Pour votre activité* et *dans
+  tout le parc* n'ont pas de tracé. Dans chaque rubrique, les lignes vont du plus précis au plus
+  général ; la réglementation va de l'interdiction à la déclaration.
+- **La carte**, à côté des rubriques sur grand écran, reste visible au défilement. Elle cadre le
+  projet et ne bouge pas. Pointer une ligne, ou lui donner le focus, la met en évidence : ses
+  habitats ressortent, les autres s'estompent, et une phrase sous la carte dit ce qu'elle montre,
+  ou qu'il n'y a rien à montrer. « Agrandir la carte » ouvre une modale DSFR où la carte se
+  déplace et se zoome. Chaque habitat y a sa couleur, attribuée dans l'ordre du croisement.
+- **Sur mobile**, la carte passe sous « En bref ». Les lignes qui ont une place sur la carte ont
+  un bouton « Voir sur la carte » qui y remonte et les met en évidence.
+- Si l'API ne peut pas croiser la localisation, la page le signale, sans carte ni habitats, et
+  montre ce qui ne dépend pas des habitats.
 
-### 4. Recommandations
+**Habitats.** Ceux que rencontre le projet d'après le croisement de sa localisation par l'API :
+dans sa zone, puis à proximité (à moins de la tolérance du croisement). Chaque ligne dit si
+l'habitat est dans la zone du projet ou à quelle distance, et mène à sa fiche. La rubrique donne la
+surface totale du projet, mais ni la part du projet dans chaque habitat, ni la part hors habitat :
+les porteurs de projet ne se sentaient pas concernés. Les contours des habitats sont élargis et
+simplifiés par la chaîne : la carte le dit.
 
-L'étape rappelle l'activité choisie et montre les recommandations du plan de gestion pour le
-projet. Sans localisation, elle renvoie à l'étape 2.
-
-Une recommandation, dans la table « Recommandations (MPM) » du plan de gestion, peut viser des
-activités, des habitats, ou les deux :
+**Recommandations.** Une recommandation, dans la table « Recommandations (MPM) » du plan de
+gestion, peut viser des activités, des habitats, ou les deux :
 
 - si elle vise des activités, le projet doit avoir l'une d'elles ;
-- si elle vise des habitats, le projet doit en concerner un : dans sa zone ou à proximité, comme à
-  l'étape 3 ;
+- si elle vise des habitats, le projet doit en concerner un : dans sa zone ou à proximité ;
 - si elle ne vise rien, elle vaut pour tous les projets.
 
-Chaque recommandation est une carte (card) DSFR : une illustration, l'enjeu qu'elle sert en
-étiquette (tag), son titre et sa description. Une recommandation qui vise des habitats dit lesquels
-le projet concerne. L'illustration est provisoire, la même pour toutes, en attendant celles du plan
-de gestion. Sans titre, la description prend sa place.
+Chaque ligne porte l'enjeu qu'elle sert en étiquette (tag). Sans titre, la description prend sa
+place.
 
-Si l'API ne peut pas croiser la localisation, l'étape le signale et montre les recommandations qui
-ne visent pas d'habitat.
+**Réglementation et espèces : contenu d'exemple.** Leurs sources ne sont pas choisies. En
+attendant, la page montre des règles et des espèces inventées pour le Cap Corse et l'Agriate
+(`apps/web/src/exemples.ts`), et chaque rubrique le dit par un badge « Contenu d'exemple ». Elles
+suivent la règle des recommandations :
 
-La maquette y montre aussi des projets similaires et des guides de bonnes pratiques, et un encart
+- une **règle** a un niveau (interdiction, avis conforme, autorisation, déclaration) et peut viser
+  des activités, des habitats, ou rien ;
+- une **espèce** a un statut de protection et peut vivre dans des habitats ; sans habitat, elle vaut
+  pour tout le parc.
+
+La maquette montrait aussi des projets similaires et des guides de bonnes pratiques, et un encart
 « Besoin d'un accompagnement ? ». Contenus et sources à définir.
+
+Questions ouvertes :
+
+- Les sources de la réglementation et des espèces, et avec elles leur forme : niveaux des règles,
+  identifiant `cdnom` des espèces.
+- Les tuiles blanches de la photographie aérienne hors des côtes (voir le plan de gestion, plus
+  bas) se voient d'autant plus sur la petite carte de la synthèse : la mer y paraît vide.
 
 ## Plan de gestion
 
@@ -206,14 +228,14 @@ deviennent des titres, des sections ou des étiquettes :
 | Action | `plan-de-gestion/actions/<id>` | Sa synthèse, sa période, son porteur, son financement, et ce qu'elle sert dans le plan |
 
 - Sans page : l'objectif à long terme (un titre de section de son enjeu, avec une ancre), le
-  sous-objectif et ses indicateurs (un bloc sous son objectif), la recommandation (une carte, comme
-  à l'étape 4, dans la fiche des habitats qu'elle vise, avec les activités qu'elle vise).
+  sous-objectif et ses indicateurs (un bloc sous son objectif), la recommandation (une carte, dans
+  la fiche des habitats qu'elle vise, avec les activités qu'elle vise).
 - Pas affichés : le sous-enjeu, simple étiquette ; la nomenclature détaillée des activités (table
   « Activités »), les métriques et l'inventaire des données géographiques. Les recommandations qui
-  ne visent pas d'habitat n'apparaissent qu'à l'étape 4.
+  ne visent pas d'habitat n'apparaissent que dans la synthèse.
 - Navigation : un menu latéral DSFR liste la présentation, les enjeux, les habitats et les actions
   ; un fil d'Ariane situe chaque page ; les pages se lient entre elles (habitat et enjeu, action et
-  objectif). L'aperçu d'un habitat, à l'étape 3, mène à sa page.
+  objectif). Chaque habitat de la synthèse mène à sa page.
 - Les textes du plan sont repris tels que tapés dans Grist : paragraphes séparés par une ligne
   vide, listes dont les lignes commencent par `*` ou `-`.
 

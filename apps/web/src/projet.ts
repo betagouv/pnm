@@ -10,8 +10,7 @@ export const projetRouteId = 'projet'
 export const projetSteps = [
   {path: 'activite', titre: 'Votre activité'},
   {path: 'localisation', titre: 'Localisation du projet'},
-  {path: 'habitats', titre: 'Habitats concernés'},
-  {path: 'recommandations', titre: 'Recommandations'},
+  {path: 'synthese', titre: 'Synthèse pour votre projet'},
 ] as const
 
 export type ProjetStep = typeof projetSteps[number]

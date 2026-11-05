@@ -9,14 +9,13 @@ import {data, type LoaderFunctionArgs} from 'react-router'
 import {fetchApi, postApi} from './api.ts'
 import {fetchPerimetre} from './parcs.ts'
 import {fetchPlanGestion, findHabitat} from './plan-gestion.ts'
-import {readProjet} from './projet-storage.ts'
 
 async function fetchConfig(): Promise<Config> {
   return fetchApi<Config>('/config')
 }
 
 // The tiles of every habitat, as an absolute address: MapLibre reads them through pmtiles://
-async function fetchTilesUrl(): Promise<string> {
+export async function fetchTilesUrl(): Promise<string> {
   const {habitatsTilesUrl} = await fetchConfig()
   return new URL(habitatsTilesUrl, globalThis.location.href).href
 }
@@ -25,43 +24,6 @@ async function fetchTilesUrl(): Promise<string> {
 // step asks
 export async function fetchCroisement(parc: string, localisation: readonly Element[]): Promise<Croisement> {
   return postApi<Croisement>('/croisement', {parc, localisation})
-}
-
-// What the habitats step has to show
-export type HabitatsStepData =
-  | {
-    readonly status: 'loaded'
-    readonly croisement: Croisement
-    readonly perimetre: MultiPolygon
-    readonly tilesUrl: string
-  }
-  // The croisement failed: the porteur de projet can go on
-  | {readonly status: 'unavailable'}
-  | {readonly status: 'noLocalisation'}
-
-export async function loadHabitatsStep({params}: LoaderFunctionArgs): Promise<HabitatsStepData> {
-  const parc = params.parcId!
-  const localisation = readProjet(parc)?.localisation ?? []
-
-  if (localisation.length === 0) {
-    return {status: 'noLocalisation'}
-  }
-
-  try {
-    const [croisement, perimetre, tilesUrl] = await Promise.all([
-      fetchCroisement(parc, localisation),
-      fetchPerimetre(parc),
-      fetchTilesUrl(),
-    ])
-    return {
-      status: 'loaded',
-      croisement,
-      perimetre,
-      tilesUrl,
-    }
-  } catch {
-    return {status: 'unavailable'}
-  }
 }
 
 export type HabitatPageData = {

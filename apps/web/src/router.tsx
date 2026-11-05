@@ -10,7 +10,7 @@ import {
 import {AppLayout} from './app-layout.tsx'
 import {PageLayout} from './components/page-layout.tsx'
 import {ActiviteStepPage} from './pages/activite-step-page.tsx'
-import {loadHabitatPage, loadHabitatsStep} from './habitats.ts'
+import {loadHabitatPage} from './habitats.ts'
 import {ActionPage} from './pages/action-page.tsx'
 import {EnjeuPage} from './pages/enjeu-page.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
@@ -20,8 +20,6 @@ import {PlanGestionLayout} from './pages/plan-gestion-layout.tsx'
 import {PlanGestionPage} from './pages/plan-gestion-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
 import {ProjetLayout} from './pages/projet-layout.tsx'
-import {RecommandationsStepPage} from './pages/recommandations-step-page.tsx'
-import {loadRecommandationsStep} from './recommandations.ts'
 import {
   fetchParcs,
   fetchPerimetre,
@@ -36,6 +34,7 @@ import {
   planGestionRouteId,
 } from './plan-gestion.ts'
 import {loadActivites, projetRouteId, projetStepPath} from './projet.ts'
+import {loadSyntheseStep} from './synthese.ts'
 
 async function loadParc({params}: LoaderFunctionArgs): Promise<Parc> {
   const parcs = await fetchParcs()
@@ -107,16 +106,15 @@ export const router = createBrowserRouter([
                     },
                   },
                   {
-                    path: 'habitats',
-                    loader: loadHabitatsStep,
+                    path: 'synthese',
+                    loader: loadSyntheseStep,
                     lazy: {
                       async Component() {
-                        const {HabitatsStepPage} = await import('./pages/habitats-step-page.tsx')
-                        return HabitatsStepPage
+                        const {SyntheseStepPage} = await import('./pages/synthese-step-page.tsx')
+                        return SyntheseStepPage
                       },
                     },
                   },
-                  {path: 'recommandations', loader: loadRecommandationsStep, Component: RecommandationsStepPage},
                 ],
               },
               {
