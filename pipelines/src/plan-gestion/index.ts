@@ -165,8 +165,8 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
   const sousObjectifObjectif = new Map(sousObjectifs.map(({id, fields}) => [id, ref(fields.objectif)]))
 
   // A recommandation names its most precise place in the plan: a sous-objectif, else an objectif,
-  // else an enjeu. Its enjeu follows from it
-  function recommandationEnjeu(id: number, fields: GristRecord['fields']): number | undefined {
+  // else an enjeu. The others follow from it
+  function recommandationPlace(id: number, fields: GristRecord['fields']): Pick<Recommandation, 'enjeu' | 'objectif' | 'sousObjectif'> {
     const sousObjectif = ref(fields.sousObjectif)
     const objectif = sousObjectif === undefined ? ref(fields.objectif) : sousObjectifObjectif.get(sousObjectif)
     const enjeu = objectif === undefined ? ref(fields.enjeu) : objectifEnjeu.get(objectif)
@@ -177,7 +177,7 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
       throw new Error(`Recommandation ${id}: its sous-objectif, objectif and enjeu disagree`)
     }
 
-    return enjeu
+    return {enjeu, objectif, sousObjectif}
   }
 
   const planRecommandations: Recommandation[] = recommandations.flatMap(({id, fields}) => {
@@ -191,7 +191,7 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
       id,
       titre: text(fields.titre),
       description,
-      enjeu: recommandationEnjeu(id, fields),
+      ...recommandationPlace(id, fields),
       activites: lookUp(refList(fields.activites), activiteIds, `Recommandation ${id}, activités`),
       habitats: lookUp(refList(fields.habitats), habitatCodes, `Recommandation ${id}, habitats`),
     }]

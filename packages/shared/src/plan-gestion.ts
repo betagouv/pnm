@@ -98,8 +98,11 @@ export const recommandationSchema = z.object({
   id: idSchema,
   titre: textSchema.optional(),
   description: textSchema,
-  // The enjeu it serves, shown as a label
+  // Where it stands in the plan, as precisely as the plan says: the enjeu it serves, and its
+  // objectif and sous-objectif when the plan names them
   enjeu: idSchema.optional(),
+  objectif: idSchema.optional(),
+  sousObjectif: idSchema.optional(),
   activites: z.array(idSchema),
   // By code habitat élémentaire
   habitats: z.array(habitatSchema.shape.code),

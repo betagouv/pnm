@@ -223,21 +223,30 @@ par l'API :
 L'étape rappelle l'activité choisie et montre les recommandations du plan de gestion pour le
 projet. Sans localisation, elle renvoie à l'étape 2.
 
-Une recommandation, dans la table « Recommandations (MPM) » du plan de gestion, peut viser des
-activités, des habitats, ou les deux :
+Une recommandation, dans la table `Recommandations` du plan de gestion, peut viser des activités,
+des habitats, ou les deux :
 
 - si elle vise des activités, le projet doit avoir l'une d'elles ;
 - si elle vise des habitats, le projet doit en concerner un : dans sa zone ou à proximité, comme à
-  l'étape 3 ;
+  l'étape 3. Un habitat que la chaîne ne cartographie pas encore ne permet pas de le savoir : une
+  recommandation qui en vise un s'affiche toujours, en disant pour quels habitats elle vaut ;
 - si elle ne vise rien, elle vaut pour tous les projets.
 
-Chaque recommandation est une carte (card) DSFR : une illustration, l'enjeu qu'elle sert en
-étiquette (tag), son titre et sa description. Une recommandation qui vise des habitats dit lesquels
-le projet concerne. L'illustration est provisoire, la même pour toutes, en attendant celles du plan
-de gestion. Sans titre, la description prend sa place.
+Une recommandation a sa place dans le plan : on la rattache à son niveau le plus précis, un
+sous-objectif, sinon un objectif, sinon un enjeu, et la chaîne en déduit les autres. Si plusieurs
+niveaux sont remplis et se contredisent, la chaîne s'arrête. Pour qu'une recommandation très
+spécifique ne s'affiche qu'aux projets qu'elle concerne, on la rattache à des activités, quitte à en
+créer : « Plaisance », « Prestation de loisirs en mer » et « Plongée sous-marine » ont été créées
+ainsi, d'après les sous-finalités 10a et 10b du plan, **à confirmer** par le parc.
+
+Les recommandations sont rangées par enjeu, dans l'ordre du plan, chaque enjeu replié avec son
+pictogramme et le nombre de ses recommandations ; celles que le plan ne place pas viennent en
+dernier. Chacune est une carte (card) DSFR : son titre, sa description si elle ne fait pas que le
+répéter, son objectif à long terme, qui mène à sa place sur la page de l'enjeu, et les habitats
+qu'elle concerne. Sans titre, la description prend sa place.
 
 Si l'API ne peut pas croiser la localisation, l'étape le signale et montre les recommandations qui
-ne visent pas d'habitat.
+ne visent pas d'habitat cartographié.
 
 La maquette y montre aussi des projets similaires et des guides de bonnes pratiques, et un encart
 « Besoin d'un accompagnement ? ». Contenus et sources à définir.
