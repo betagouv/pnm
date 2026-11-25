@@ -289,18 +289,8 @@ valider par le parc. Leur identifiant TAXREF (`cdNom`) n'y est pas encore, **à 
 - Pas affichés : le sous-enjeu, simple étiquette ; la formulation de l'enjeu ; la nomenclature
   détaillée des activités (table `Nomenclature_activites`), les métriques et l'inventaire des
   données géographiques.
-- Les textes du plan sont repris tels que tapés dans Grist : paragraphes séparés par une ligne
-  vide, listes dont les lignes commencent par `*` ou `-`, un bénéfice par ligne.
-- **Textes rédigés par Mon Parc Marin** : là où le plan de gestion dynamique n'a pas encore de
-  texte, Mon Parc Marin en a rédigé un dans Grist. Une marque en tête dit d'où il vient, et le site
-  l'affiche en badge :
-  - `[Résumé du plan]`, badge « Résumé du plan » : un résumé du plan de gestion adopté en 2019
-    ([PDF](https://www.consultations-publiques.developpement-durable.gouv.fr/IMG/pdf/plan_de_gestion_pnmca_-_partie_1_-_plan_de_gestion.pdf)),
-    qui finit par les pages utilisées ;
-  - `[Texte généré]`, badge « Texte généré » : un texte écrit à partir des seuls libellés du plan
-    dynamique (enjeux, niveaux d'exigence, indicateurs), là où le plan de 2019 ne dit rien d'utile.
-
-  L'équipe du parc relit le texte, puis retire la marque.
+- Les textes du plan sont repris tels que tapés dans Grist, et ceux que Mon Parc Marin a rédigés
+  portent une marque, affichée en badge : voir [modele-grist.md](modele-grist.md).
 
 Écarts à la maquette :
 
