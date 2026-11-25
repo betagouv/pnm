@@ -201,7 +201,7 @@ function Habitats({
           />
         )}
       <p className='fr-text--xs fr-mt-4w fr-mb-0'>
-        Sources : cartographies des habitats de l'OFB, plan de gestion du parc.
+        Source : cartographies des habitats de l'OFB.
       </p>
     </>
   )

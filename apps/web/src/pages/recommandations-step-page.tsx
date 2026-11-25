@@ -88,15 +88,12 @@ export function RecommandationsStepPage() {
           <>
             <p>
               {recommandations.length === 1
-                ? 'Une recommandation du plan de gestion du parc, selon votre activité et les habitats concernés par votre projet.'
-                : `${recommandations.length} recommandations du plan de gestion du parc, selon votre activité et les habitats concernés par votre projet, rangées par enjeu.`}
+                ? 'Une recommandation pour votre activité et les habitats concernés par votre projet.'
+                : `${recommandations.length} recommandations pour votre activité et les habitats concernés par votre projet, rangées par enjeu.`}
             </p>
             <RecommandationGroups groups={groups} />
           </>
         )}
-      <p className='fr-text--xs fr-mt-4w fr-mb-0'>
-        Source : plan de gestion du parc.
-      </p>
       <StepNavigation previous={projetStepPath(parc.id, 'enjeux')} />
     </>
   )

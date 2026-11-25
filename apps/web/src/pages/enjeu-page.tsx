@@ -70,9 +70,8 @@ export function EnjeuPage() {
       <h1>Enjeux du Parc marin</h1>
       {plan.document !== undefined && (
         <p className='fr-text--sm'>
-          {'Source : '}
-          <a href={plan.document} target='_blank' rel='noopener noreferrer' title='le plan de gestion du Parc - nouvelle fenêtre'>
-            le plan de gestion du Parc
+          <a href={plan.document} target='_blank' rel='noopener noreferrer' title='Lire le plan de gestion du Parc - nouvelle fenêtre'>
+            Lire le plan de gestion du Parc
           </a>
         </p>
       )}
@@ -101,7 +100,7 @@ export function EnjeuPage() {
             </Suspense>
             <p className='fr-text--xs fr-mt-1w fr-mb-0'>
               Les contours des habitats sont élargis et simplifiés : ils montrent où ils se trouvent, pas
-              leur limite exacte. Sources : cartographies des habitats de l'OFB, plan de gestion du parc.
+              leur limite exacte. Source : cartographies des habitats de l'OFB.
             </p>
           </div>
         )}
