@@ -209,6 +209,10 @@ par l'API :
   légende. Les habitats qui partagent un habitat générique partagent une couleur, et la légende les
   nomme par lui (« Récifs ») : un parc en compte plus que de couleurs qu'on distingue. Les contours des habitats sont élargis et simplifiés par
   la chaîne : la page le dit.
+- Une carte des habitats, ici comme sur la page d'un enjeu ou d'un habitat, s'ouvre en pleine page
+  par un contrôle sous son zoom : la légende reste visible, la molette et un doigt zooment sans
+  touche, et « Fermer », en haut à droite, ou Échap la referment. Hors pleine page, la carte ne
+  zoome qu'avec deux doigts ou Ctrl, pour laisser défiler la page.
 - Choisir une étiquette met son habitat en surbrillance sur la carte : les autres s'estompent.
   Dessous viennent sa distance s'il est à proximité, les éléments du projet qu'il concerne quand il
   y en a plusieurs, le début de sa présentation et un lien vers sa fiche. La choisir de nouveau la
