@@ -4,5 +4,6 @@ import type {Layer} from '../../lib/layer.ts'
 import {coralligeneLayer} from './coralligene.ts'
 import {herbiersPosidonieLayer} from './herbiers-posidonie.ts'
 import {lagunesLayer} from './lagunes.ts'
+import {natura2000Layers} from './natura-2000.ts'
 
-export const habitatLayers: Layer[] = [herbiersPosidonieLayer, coralligeneLayer, lagunesLayer]
+export const habitatLayers: Layer[] = [herbiersPosidonieLayer, coralligeneLayer, lagunesLayer, ...natura2000Layers]

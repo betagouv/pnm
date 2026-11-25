@@ -174,14 +174,19 @@ et, en développement, le middleware Vite.
 - Tous les documents de plan de gestion suivent le même modèle, décrit dans
   [modele-grist.md](modele-grist.md), et c'est à eux de le rejoindre : la chaîne ne gère pas de
   variantes.
-- Une couche n'appartient à aucun parc : nationale ou par façade maritime, elle se rattache aux
-  habitats par leur code, quel que soit le plan de gestion qui les cite.
+- Une couche n'appartient à aucun parc : nationale, par façade maritime ou propre à un site
+  Natura 2000, elle se rattache aux habitats par leur code, quel que soit le plan de gestion qui
+  les cite. Les cartographies des sites Natura 2000 portent le code habitat élémentaire de chaque
+  objet (`cod_ch2004`) : elles couvrent les habitats que les inventaires nationaux n'ont pas, comme
+  les sables, les roches ou les grottes.
 - Une couche est traitée entière, jamais découpée à un parc : ce que la chaîne produit peut servir
   à d'autres usages que les nôtres.
 - Le tampon redresse une couche, pour le rendu comme pour le croisement : des miettes, des éclats
   et des points deviennent des surfaces qui représentent un habitat, fusionnées quand elles se
-  touchent. La tolérance autour d'un projet n'est pas ce tampon : elle élargit le projet, au moment
-  du croisement.
+  touchent. Son rayon suit la finesse de la couche : 200 m pour les inventaires nationaux, 25 à
+  50 m pour les cartographies au 1/5 000 des sites Natura 2000, où un habitat du haut de la côte
+  n'est qu'une frange de quelques mètres. La tolérance autour d'un projet n'est pas ce tampon :
+  elle élargit le projet, au moment du croisement.
 
 ## Exécution
 

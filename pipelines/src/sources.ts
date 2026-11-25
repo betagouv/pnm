@@ -35,9 +35,27 @@ function ofbLayer(typeName: string): Source {
   }
 }
 
+// La cartographie des habitats marins d'un site Natura 2000, en zones ou en points : chaque objet
+// porte son code habitat élémentaire (cod_ch2004). Ces couches n'ont pas d'id : tid en tient lieu
+function natura2000Layer(typeName: string): Source {
+  return {
+    url: 'https://wxs.ofb.fr/geoserver/habitat/ows',
+    typeName,
+    key: 'tid',
+    sortBy: 'tid',
+    crs: 'EPSG:3857',
+  }
+}
+
 export const herbiersPosidonie = ofbLayer('habitat:eco_med_herbier_posidonia_oceanica_2022_pol_3857')
 export const coralligene = ofbLayer('habitat:eco_med_coralligene_ofb_pol_3857')
 export const lagunes = ofbLayer('habitat:eco_med_ref_lagunes_1150_tdv_ofb_2021_pol_3857')
+// Les sites Natura 2000 « Plateau du Cap Corse » et « Agriates », qui couvrent l'essentiel du parc
+// naturel marin du Cap Corse et de l'Agriate
+export const plateauCapCorse = natura2000Layer('habitat:eco_med_n2000_dhff_fr9402013_habitats_aamp_pol_3857')
+export const plateauCapCorsePoints = natura2000Layer('habitat:eco_med_n2000_dhff_fr9402013_habitats_aamp_pt_3857')
+export const agriates = natura2000Layer('habitat:eco_med_n2000_dhff_fr9400570_habitats_aamp_pol_3857')
+export const agriatesPoints = natura2000Layer('habitat:eco_med_n2000_dhff_fr9400570_habitats_aamp_pt_3857')
 
 export const sources: Source[] = [
   airesMarinesProtegees,
@@ -48,6 +66,10 @@ export const sources: Source[] = [
   ofbLayer('habitat:eco_med_apmcca_est_caremaerl_2025_ofb_pol_3857'),
   ofbLayer('habitat:eco_med_apmcca_ouest_caremaerl_2025_ofb_pol_3857'),
   lagunes,
+  plateauCapCorse,
+  plateauCapCorsePoints,
+  agriates,
+  agriatesPoints,
   ofbLayer('espece:bio_med_recifs_biogenique3_ofb_pt'),
 ]
 
