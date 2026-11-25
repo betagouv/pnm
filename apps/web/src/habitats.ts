@@ -5,14 +5,25 @@ import type {
   Element,
   MultiPolygon,
 } from '@pnm/shared'
-import {data, type LoaderFunctionArgs} from 'react-router'
+import type {LoaderFunctionArgs} from 'react-router'
 import {fetchApi, postApi} from './api.ts'
 import {fetchPerimetre} from './parcs.ts'
-import {fetchPlanGestion, findHabitat} from './plan-gestion.ts'
+import {
+  enjeuHabitats,
+  fetchPlanGestion,
+  findEnjeu,
+  findHabitat,
+  notFound,
+} from './plan-gestion.ts'
 import {readProjet} from './projet-storage.ts'
 
 async function fetchConfig(): Promise<Config> {
   return fetchApi<Config>('/config')
+}
+
+// The habitats that the processing chain has surfaces for
+export async function fetchCartographies(): Promise<Cartographie[]> {
+  return fetchApi<Cartographie[]>('/habitats')
 }
 
 // The tiles of every habitat, as an absolute address: MapLibre reads them through pmtiles://
@@ -64,6 +75,37 @@ export async function loadHabitatsStep({params}: LoaderFunctionArgs): Promise<Ha
   }
 }
 
+// The habitats of an enjeu that the processing chain has surfaces for, on a map of the parc
+export type EnjeuCarte = {
+  readonly perimetre: MultiPolygon
+  readonly tilesUrl: string
+  readonly codes: readonly string[]
+}
+
+export type EnjeuPageData = {
+  // An enjeu without mapped habitats has no map
+  readonly carte?: EnjeuCarte
+}
+
+export async function loadEnjeuPage({params}: LoaderFunctionArgs): Promise<EnjeuPageData> {
+  const plan = await fetchPlanGestion(params.parcId!)
+  const enjeu = findEnjeu(plan, params.enjeuId) ?? notFound()
+  const habitats = enjeuHabitats(plan, enjeu)
+
+  if (habitats.length === 0) {
+    return {}
+  }
+
+  const [perimetre, tilesUrl, cartographies] = await Promise.all([
+    fetchPerimetre(params.parcId!),
+    fetchTilesUrl(),
+    fetchCartographies(),
+  ])
+  const mapped = new Set(cartographies.map(cartographie => cartographie.code))
+  const codes = habitats.filter(habitat => mapped.has(habitat.code)).map(habitat => habitat.code)
+  return codes.length === 0 ? {} : {carte: {perimetre, tilesUrl, codes}}
+}
+
 export type HabitatPageData = {
   readonly perimetre: MultiPolygon
   readonly tilesUrl: string
@@ -76,14 +118,13 @@ export async function loadHabitatPage({params}: LoaderFunctionArgs): Promise<Hab
   const plan = await fetchPlanGestion(params.parcId!)
 
   if (!findHabitat(plan, params.code)) {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error
-    throw data(null, {status: 404})
+    notFound()
   }
 
   const [perimetre, tilesUrl, cartographies] = await Promise.all([
     fetchPerimetre(params.parcId!),
     fetchTilesUrl(),
-    fetchApi<Cartographie[]>('/habitats'),
+    fetchCartographies(),
   ])
 
   return {perimetre, tilesUrl, isMapped: cartographies.some(cartographie => cartographie.code === params.code)}

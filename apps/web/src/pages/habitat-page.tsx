@@ -1,15 +1,14 @@
-import {CallOut} from '@codegouvfr/react-dsfr/CallOut'
-import {Link, useLoaderData, useParams} from 'react-router'
+import {useLoaderData, useParams} from 'react-router'
 import {HabitatMap} from '../components/habitat-map.tsx'
 import {PlanText} from '../components/plan-text.tsx'
 import {RecommandationCards} from '../components/recommandation-cards.tsx'
+import {SousObjectifCallOut} from '../components/sous-objectif-call-out.tsx'
 import type {HabitatPageData} from '../habitats.ts'
 import {useParc} from '../parcs.ts'
 import {
-  enjeuPath,
   findHabitat,
   findSousObjectif,
-  sousObjectifAnchor,
+  sousObjectifPath,
   usePlanGestion,
 } from '../plan-gestion.ts'
 
@@ -31,20 +30,19 @@ export function HabitatPage() {
 
   return (
     <>
-      <title>{`${habitat.nom} - Plan de gestion - ${parc.nom} - Mon Parc Marin`}</title>
+      <title>{`${habitat.nom} - Explorer les enjeux - ${parc.nom} - Mon Parc Marin`}</title>
       <h1>{habitat.nom}</h1>
       {habitat.synthese === undefined
         ? <p>Le plan de gestion ne présente pas encore cet habitat.</p>
         : <PlanText text={habitat.synthese} />}
 
       {place && (
-        <CallOut title='Dans le plan de gestion' titleAs='h2'>
-          {`Objectif à long terme : ${place.objectif.libelle}. Sous-objectif : ${place.sousObjectif.libelle}.`}
-          <br />
-          <Link to={`${enjeuPath(parc.id, place.enjeu.id)}#${sousObjectifAnchor(place.sousObjectif.id)}`}>
-            {`Voir l'enjeu « ${place.enjeu.libelle} »`}
-          </Link>
-        </CallOut>
+        <SousObjectifCallOut
+          enjeu={place.enjeu.libelle}
+          objectif={place.objectif.libelle}
+          sousObjectif={place.sousObjectif.libelle}
+          to={sousObjectifPath(parc.id, place.sousObjectif.id)}
+        />
       )}
 
       <p className='fr-text--sm fr-mb-1w'>

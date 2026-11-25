@@ -1,8 +1,27 @@
 import {RadioButtons} from '@codegouvfr/react-dsfr/RadioButtons'
 import type {Activite} from '@pnm/shared'
 import type {ReactNode} from 'react'
+import {unmarkText} from '../format.ts'
 import {pictogramUrl} from '../pictograms.ts'
 import {Pictogram} from './pictogram.tsx'
+import {TextMarkBadge} from './text-mark-badge.tsx'
+
+// A description that Mon Parc Marin wrote says so
+function hint(description: string | undefined): ReactNode {
+  if (description === undefined) {
+    return undefined
+  }
+
+  const {text, mark} = unmarkText(description)
+  return mark === undefined
+    ? text
+    : (
+      <>
+        <TextMarkBadge isInline mark={mark} />
+        {text}
+      </>
+    )
+}
 
 type ActiviteRadiosProps = {
   readonly activites: readonly Activite[]
@@ -31,7 +50,7 @@ export function ActiviteRadios({
         const url = activite.pictogramme === undefined ? undefined : pictogramUrl(activite.pictogramme)
         return {
           label: activite.nom,
-          hintText: activite.description,
+          hintText: hint(activite.description),
           // An unknown pictogram leaves its space empty rather than breaking the step
           illustration: url === undefined ? undefined : <Pictogram url={url} />,
           nativeInputProps: {

@@ -10,18 +10,18 @@ import {
 import {AppLayout} from './app-layout.tsx'
 import {PageLayout} from './components/page-layout.tsx'
 import {ActiviteStepPage} from './pages/activite-step-page.tsx'
-import {loadHabitatPage, loadHabitatsStep} from './habitats.ts'
+import {loadEnjeuPage, loadHabitatPage, loadHabitatsStep} from './habitats.ts'
 import {ActionPage} from './pages/action-page.tsx'
-import {EnjeuPage} from './pages/enjeu-page.tsx'
+import {EnjeuxLayout} from './pages/enjeux-layout.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
+import {EspecePage} from './pages/espece-page.tsx'
 import {HomePage} from './pages/home-page.tsx'
 import {NotFoundPage} from './pages/not-found-page.tsx'
 import {ParcHomePage} from './pages/parc-home-page.tsx'
-import {PlanGestionLayout} from './pages/plan-gestion-layout.tsx'
-import {PlanGestionPage} from './pages/plan-gestion-page.tsx'
 import {PreparerProjetPage} from './pages/preparer-projet-page.tsx'
 import {ProjetLayout} from './pages/projet-layout.tsx'
 import {RecommandationsStepPage} from './pages/recommandations-step-page.tsx'
+import {SousObjectifPage} from './pages/sous-objectif-page.tsx'
 import {loadRecommandationsStep} from './recommandations.ts'
 import {
   fetchParcs,
@@ -30,9 +30,12 @@ import {
   parcsRouteId,
 } from './parcs.ts'
 import {
+  enjeuxSection,
   loadAction,
-  loadEnjeu,
+  loadEnjeux,
+  loadEspece,
   loadPlanGestion,
+  loadSousObjectif,
   planGestionRouteId,
 } from './plan-gestion.ts'
 import {loadActivites, projetRouteId, projetStepPath} from './projet.ts'
@@ -121,13 +124,25 @@ export const router = createBrowserRouter([
               },
               {
                 id: planGestionRouteId,
-                path: 'plan-de-gestion',
+                path: enjeuxSection,
                 loader: loadPlanGestion,
-                Component: PlanGestionLayout,
+                Component: EnjeuxLayout,
                 children: [
-                  {index: true, Component: PlanGestionPage},
-                  {path: 'enjeux/:enjeuId', loader: loadEnjeu, Component: EnjeuPage},
+                  {index: true, loader: loadEnjeux},
+                  {
+                    path: ':enjeuId',
+                    loader: loadEnjeuPage,
+                    // MapLibre is heavy: the page loads it only for an enjeu with a map
+                    lazy: {
+                      async Component() {
+                        const {EnjeuPage} = await import('./pages/enjeu-page.tsx')
+                        return EnjeuPage
+                      },
+                    },
+                  },
+                  {path: 'sous-objectifs/:sousObjectifId', loader: loadSousObjectif, Component: SousObjectifPage},
                   {path: 'actions/:actionId', loader: loadAction, Component: ActionPage},
+                  {path: 'especes/:especeId', loader: loadEspece, Component: EspecePage},
                   {
                     path: 'habitats/:code',
                     loader: loadHabitatPage,

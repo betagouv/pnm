@@ -13,6 +13,7 @@ import {
   useParc,
   useParcs,
 } from './parcs.ts'
+import {enjeuxPath, enjeuxSection} from './plan-gestion.ts'
 
 export function AppLayout() {
   const parcs = useParcs()
@@ -41,19 +42,19 @@ export function AppLayout() {
         {text: 'Tous les parcs', linkProps: {to: preparerProjetPath}},
       ],
     },
+    // The enjeux of the parc in view, once the parc is open
+    ...(parc?.disponible
+      ? [{
+        text: 'Explorer les enjeux',
+        linkProps: {to: enjeuxPath(parc.id)},
+        isActive: section === enjeuxSection,
+      }]
+      : []),
     {
       text: 'Préparer mon projet',
       linkProps: {to: parc ? parcPath(parc.id) : preparerProjetPath},
       isActive: pathname === preparerProjetPath || section === 'preparer-mon-projet',
     },
-    // The plan de gestion of the parc in view, once the parc is open
-    ...(parc?.disponible
-      ? [{
-        text: 'Plan de gestion',
-        linkProps: {to: parcPath(parc.id, 'plan-de-gestion')},
-        isActive: section === 'plan-de-gestion',
-      }]
-      : []),
   ]
 
   return (

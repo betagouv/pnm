@@ -1,41 +1,54 @@
 import type {
   Action,
   Enjeu,
+  Espece,
   Habitat,
   Objectif,
   PlanGestion,
+  Recommandation,
   SousObjectif,
 } from '@pnm/shared'
-import {data, type LoaderFunctionArgs, useRouteLoaderData} from 'react-router'
+import {
+  data,
+  type LoaderFunctionArgs,
+  redirect,
+  useRouteLoaderData,
+} from 'react-router'
 import {ApiError, fetchApi} from './api.ts'
 import {parcPath} from './parcs.ts'
 
+// The section of a parc that explores the enjeux of its plan de gestion
 export const planGestionRouteId = 'planGestion'
+export const enjeuxSection = 'enjeux'
 
-export function planGestionPath(parcId: string): string {
-  return parcPath(parcId, 'plan-de-gestion')
+export function enjeuxPath(parcId: string): string {
+  return parcPath(parcId, enjeuxSection)
 }
 
 export function enjeuPath(parcId: string, enjeuId: number): string {
-  return `${planGestionPath(parcId)}/enjeux/${enjeuId}`
+  return `${enjeuxPath(parcId)}/${enjeuId}`
 }
 
-// The objectif, as a section of the page of its enjeu
+// The objectif, as a part of the page of its enjeu
 export function objectifAnchor(objectifId: number): string {
   return `objectif-${objectifId}`
 }
 
-export function sousObjectifAnchor(sousObjectifId: number): string {
-  return `sous-objectif-${sousObjectifId}`
+export function sousObjectifPath(parcId: string, sousObjectifId: number): string {
+  return `${enjeuxPath(parcId)}/sous-objectifs/${sousObjectifId}`
 }
 
 export function actionPath(parcId: string, actionId: number): string {
-  return `${planGestionPath(parcId)}/actions/${actionId}`
+  return `${enjeuxPath(parcId)}/actions/${actionId}`
 }
 
 export function habitatPath(parcId: string, code: string): string {
   // A code is written as the managers of the parc choose
-  return `${planGestionPath(parcId)}/habitats/${encodeURIComponent(code)}`
+  return `${enjeuxPath(parcId)}/habitats/${encodeURIComponent(code)}`
+}
+
+export function especePath(parcId: string, especeId: number): string {
+  return `${enjeuxPath(parcId)}/especes/${especeId}`
 }
 
 // The plan de gestion of a parc; a parc without one answers 404
@@ -57,11 +70,11 @@ export async function loadPlanGestion({params}: LoaderFunctionArgs): Promise<Pla
 }
 
 export function usePlanGestion(): PlanGestion {
-  // Always set under the plan de gestion route, which loads it
+  // Always set under the enjeux route, which loads it
   return useRouteLoaderData<PlanGestion>(planGestionRouteId)!
 }
 
-function notFound(): never {
+export function notFound(): never {
   // eslint-disable-next-line @typescript-eslint/only-throw-error
   throw data(null, {status: 404})
 }
@@ -78,15 +91,8 @@ export function findHabitat(plan: PlanGestion, code: string | undefined): Habita
   return plan.habitats.find(habitat => habitat.code === code)
 }
 
-// A page of the plan de gestion answers 404 for what the plan does not hold
-export async function loadEnjeu({params}: LoaderFunctionArgs): Promise<undefined> {
-  const plan = await fetchPlanGestion(params.parcId!)
-  return findEnjeu(plan, params.enjeuId) ? undefined : notFound()
-}
-
-export async function loadAction({params}: LoaderFunctionArgs): Promise<undefined> {
-  const plan = await fetchPlanGestion(params.parcId!)
-  return findAction(plan, params.actionId) ? undefined : notFound()
+export function findEspece(plan: PlanGestion, especeId: string | undefined): Espece | undefined {
+  return plan.especes.find(espece => String(espece.id) === especeId)
 }
 
 export type ObjectifPlace = {
@@ -110,10 +116,10 @@ export function findObjectif(plan: PlanGestion, objectifId: number): ObjectifPla
   return undefined
 }
 
-export function findSousObjectif(plan: PlanGestion, sousObjectifId: number): SousObjectifPlace | undefined {
+export function findSousObjectif(plan: PlanGestion, sousObjectifId: number | string | undefined): SousObjectifPlace | undefined {
   for (const enjeu of plan.enjeux) {
     for (const objectif of enjeu.objectifs) {
-      const sousObjectif = objectif.sousObjectifs.find(candidate => candidate.id === sousObjectifId)
+      const sousObjectif = objectif.sousObjectifs.find(candidate => String(candidate.id) === String(sousObjectifId))
 
       if (sousObjectif) {
         return {enjeu, objectif, sousObjectif}
@@ -124,12 +130,75 @@ export function findSousObjectif(plan: PlanGestion, sousObjectifId: number): Sou
   return undefined
 }
 
-// The habitats whose sous-objectif belongs to the enjeu
+// A habitat or an espèce falls under a sous-objectif of the plan
+type UnderSousObjectif = {readonly sousObjectif?: number}
+
+// The enjeu of a habitat or an espèce, through its sous-objectif
+export function sousObjectifEnjeu(plan: PlanGestion, item: UnderSousObjectif): Enjeu | undefined {
+  return item.sousObjectif === undefined ? undefined : findSousObjectif(plan, item.sousObjectif)?.enjeu
+}
+
+// Those whose sous-objectif belongs to the enjeu, in the order of the sous-objectifs
+function underEnjeu<T extends UnderSousObjectif>(items: readonly T[], enjeu: Enjeu): T[] {
+  return enjeu.objectifs.flatMap(objectif => objectif.sousObjectifs.flatMap(sousObjectif => items.filter(item => item.sousObjectif === sousObjectif.id)))
+}
+
 export function enjeuHabitats(plan: PlanGestion, enjeu: Enjeu): Habitat[] {
-  const sousObjectifs = new Set(enjeu.objectifs.flatMap(objectif => objectif.sousObjectifs.map(sousObjectif => sousObjectif.id)))
-  return plan.habitats.filter(habitat => habitat.sousObjectif !== undefined && sousObjectifs.has(habitat.sousObjectif))
+  return underEnjeu(plan.habitats, enjeu)
+}
+
+export function enjeuEspeces(plan: PlanGestion, enjeu: Enjeu): Espece[] {
+  return underEnjeu(plan.especes, enjeu)
+}
+
+export function sousObjectifHabitats(plan: PlanGestion, sousObjectif: SousObjectif): Habitat[] {
+  return plan.habitats.filter(habitat => habitat.sousObjectif === sousObjectif.id)
+}
+
+export function sousObjectifEspeces(plan: PlanGestion, sousObjectif: SousObjectif): Espece[] {
+  return plan.especes.filter(espece => espece.sousObjectif === sousObjectif.id)
 }
 
 export function enjeuActions(plan: PlanGestion, enjeu: Enjeu): Action[] {
   return plan.actions.filter(action => action.enjeux.includes(enjeu.id))
+}
+
+export function enjeuRecommandations(plan: PlanGestion, enjeu: Enjeu): Recommandation[] {
+  return plan.recommandations.filter(recommandation => recommandation.enjeu === enjeu.id)
+}
+
+// Where an action stands on a day, from its dates: 2026-11-25
+export function actionStatut(action: Action, today: string): string | undefined {
+  if (action.debut !== undefined && today < action.debut) {
+    return 'À venir'
+  }
+
+  if (action.fin !== undefined && action.fin < today) {
+    return 'Terminée'
+  }
+
+  return action.debut === undefined && action.fin === undefined ? undefined : 'En cours'
+}
+
+// The section opens on the first enjeu of the plan
+export async function loadEnjeux({params}: LoaderFunctionArgs): Promise<Response> {
+  const plan = await fetchPlanGestion(params.parcId!)
+  const [first] = plan.enjeux
+  return first ? redirect(enjeuPath(params.parcId!, first.id)) : notFound()
+}
+
+// A page answers 404 for what the plan does not hold
+export async function loadSousObjectif({params}: LoaderFunctionArgs): Promise<undefined> {
+  const plan = await fetchPlanGestion(params.parcId!)
+  return findSousObjectif(plan, params.sousObjectifId) ? undefined : notFound()
+}
+
+export async function loadAction({params}: LoaderFunctionArgs): Promise<undefined> {
+  const plan = await fetchPlanGestion(params.parcId!)
+  return findAction(plan, params.actionId) ? undefined : notFound()
+}
+
+export async function loadEspece({params}: LoaderFunctionArgs): Promise<undefined> {
+  const plan = await fetchPlanGestion(params.parcId!)
+  return findEspece(plan, params.especeId) ? undefined : notFound()
 }

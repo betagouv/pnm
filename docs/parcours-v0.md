@@ -83,9 +83,9 @@ logo ni photo a la même page, sans ces images. Le texte de la page vaut pour to
 Écarts à la maquette :
 
 - le titre propre au parc dans l'en-tête (« Parc naturel marin / Cap Corse Agriate ») et son menu
-  (« Découvrir les enjeux du Parc », « Les travaux du Parc », « Données ») ne sont pas repris : le
-  site garde son titre et son menu. Son sous-titre, « Outil d'aide à la décision et à l'action »,
-  est devenu celui du site ;
+  (« Les travaux du Parc », « Données ») ne sont pas repris : le site garde son titre et son menu,
+  où « Découvrir les enjeux du Parc » est devenu « Explorer les enjeux ». Son sous-titre, « Outil
+  d'aide à la décision et à l'action », est devenu celui du site ;
 - la phrase « Le Parc naturel marin réunit », inachevée, n'est pas reprise ;
 - les emplacements d'image des missions sont des pictogrammes du DSFR (`environment/leaf`,
   `environment/human-cooperation`, `leisure/community`).
@@ -120,15 +120,17 @@ La maquette reste indicative. Son titre « Cap projet » n'est pas repris : la p
 - Le porteur choisit une activité parmi des boutons radio riches du DSFR, avec pictogramme. La
   maquette montrait des tuiles, mais les tuiles DSFR servent à naviguer et n'ont pas d'état
   sélectionné. Continuer sans choix affiche une erreur sur le groupe de boutons.
-- Les activités proposées sont celles du plan de gestion du parc, dans la table « Activités (MPM) »
-  de son document Grist : chaque parc a les siennes. Le projet garde l'identifiant Grist de
+- Les activités proposées sont celles du plan de gestion du parc, dans la table `Activites` de son
+  document Grist : chaque parc a les siennes. Le projet garde l'identifiant Grist de
   l'activité.
 - **Ajouter une activité** : une ligne dans cette table, avec son nom, sa description et son
   pictogramme, puis un passage de la chaîne de traitement. Le pictogramme est désigné par sa
   catégorie et son nom dans le DSFR, par exemple `institutions/navy-anchor`. Un nom inconnu du DSFR
   laisse sa place vide.
-- La description de « Rechargement de plage » et son pictogramme (`environment/sun`) sont
-  provisoires, **à confirmer**.
+- La description de « Rechargement de plage » et les pictogrammes des activités autres que
+  « Manifestation nautique » sont provisoires, **à confirmer**. Les activités qui n'avaient pas de
+  description en ont une générée, marquée comme les textes générés du plan (voir « Explorer les
+  enjeux »).
 
 ### 2. Localisation du projet
 
@@ -240,37 +242,74 @@ ne visent pas d'habitat.
 La maquette y montre aussi des projets similaires et des guides de bonnes pratiques, et un encart
 « Besoin d'un accompagnement ? ». Contenus et sources à définir.
 
-## Plan de gestion
+## Explorer les enjeux
 
-Le plan de gestion d'un parc a ses pages, indépendantes du projet, sous
-`/parcs/<parc>/plan-de-gestion`. Une entrée « Plan de gestion » du menu principal y mène, pour le
-parc en cours. Seul le plan du Cap Corse et de l'Agriate est dans Grist ; un parc sans plan de
-gestion n'a pas ces pages. Le contenu est encore partiel : chaque page dit ce qui manque.
+Les enjeux du plan de gestion d'un parc ont leur section, indépendante du projet, sous
+`/parcs/<parc>/enjeux`, d'après la maquette de la designeuse. Une entrée « Explorer les enjeux » du
+menu principal y mène, pour le parc en cours. Elle remplace les anciennes pages « Plan de gestion ».
+Seul le plan du Cap Corse et de l'Agriate est dans Grist ; un parc sans plan de gestion n'a pas
+cette section.
 
-Une entité a sa page quand elle porte un contenu propre ; celles qui ne font que ranger les autres
-deviennent des titres, des sections ou des étiquettes :
+Les enjeux sont une donnée : chaque parc a les siens, dans son document Grist, avec leur
+pictogramme et leurs textes. Le code ne connaît aucun enjeu en particulier. Un enjeu liste les
+habitats et les espèces qui relèvent de ses sous-objectifs. Il montre ses habitats sur une carte
+quand la chaîne en a les surfaces : c'est le cas d'« Habitats » au Cap Corse. Les espèces n'ont pas
+encore de données de répartition.
+
+Les espèces sont dans la table `Especes` du document Grist, chacune rattachée à un sous-objectif ;
+une page les range dans l'ordre de leurs sous-objectifs. Au Cap Corse, Mon Parc Marin y a mis les
+20 espèces que le plan de gestion de 2019 présente vraiment (chapitre 6 : oiseaux marins, cétacés,
+tortue caouanne, espèces protégées, ange de mer), chacune avec un résumé du plan : la liste est à
+valider par le parc. Leur identifiant TAXREF (`cdNom`) n'y est pas encore, **à confirmer**.
 
 | Page | Adresse | Contenu |
 | --- | --- | --- |
-| Présentation | `plan-de-gestion` | Le document officiel, les enjeux, les habitats rangés par habitat générique, les actions |
-| Enjeu | `plan-de-gestion/enjeux/<id>` | Sa formulation et sa synthèse, ses objectifs à long terme, chacun avec ses sous-objectifs, leur niveau d'exigence et leurs indicateurs ; les habitats et les actions liés |
-| Habitat | `plan-de-gestion/habitats/<code habitat>` | Sa présentation, l'enjeu et l'objectif dont il relève, ses codes, les recommandations qui le visent, et sa carte sur tout le parc quand la chaîne en a les surfaces |
-| Action | `plan-de-gestion/actions/<id>` | Sa synthèse, sa période, son porteur, son financement, et ce qu'elle sert dans le plan |
+| Enjeux du Parc marin | `enjeux/<id>` | Un filtre par grande thématique, une étiquette par enjeu ; l'enjeu choisi : sa carte s'il en a une, ses habitats et ses espèces, ses chiffres, sa description, sa synthèse (« En savoir plus »), ses bénéfices pour la mer et pour le territoire, ses objectifs avec leur présentation (repliée au-dessus de leurs sous-objectifs, ou en entier pour ceux que le plan ne divise pas, avec leur niveau d'exigence), les actions du Parc |
+| Sous-objectif | `enjeux/sous-objectifs/<id>` | Sa présentation, son niveau d'exigence, une image, ses indicateurs (« Où en est-on ? ») et les habitats et les espèces qui en relèvent |
+| Habitat | `enjeux/habitats/<code habitat>` | Sa présentation, l'enjeu et le sous-objectif dont il relève, ses codes, les recommandations qui le visent, et sa carte sur tout le parc quand la chaîne en a les surfaces |
+| Espèce | `enjeux/especes/<id>` | Son nom, son nom scientifique, sa présentation, l'enjeu et le sous-objectif dont elle relève |
+| Action | `enjeux/actions/<id>` | Sa synthèse, sa catégorie, sa période, son porteur, son financement, et ce qu'elle sert dans le plan |
 
-- Sans page : l'objectif à long terme (un titre de section de son enjeu, avec une ancre), le
-  sous-objectif et ses indicateurs (un bloc sous son objectif), la recommandation (une carte, comme
-  à l'étape 4, dans la fiche des habitats qu'elle vise, avec les activités qu'elle vise).
-- Pas affichés : le sous-enjeu, simple étiquette ; la nomenclature détaillée des activités (table
-  « Activités »), les métriques et l'inventaire des données géographiques. Les recommandations qui
-  ne visent pas d'habitat n'apparaissent qu'à l'étape 4.
-- Navigation : un menu latéral DSFR liste la présentation, les enjeux, les habitats et les actions
-  ; un fil d'Ariane situe chaque page ; les pages se lient entre elles (habitat et enjeu, action et
-  objectif). L'aperçu d'un habitat, à l'étape 3, mène à sa page.
+- `enjeux` mène au premier enjeu du plan. Choisir une étiquette change d'enjeu sans faire
+  remonter la page : l'adresse porte l'enjeu, qu'on peut partager.
+- Un fil d'Ariane situe chaque page : une page de détail se range sous l'enjeu dont elle relève,
+  une action sous le premier enjeu qu'elle sert. L'aperçu d'un habitat, à l'étape 3, mène à sa
+  fiche.
+- Les chiffres d'un enjeu se calculent : ses sous-objectifs et les recommandations qui le servent.
+- Le statut d'une action (« En cours », « Terminée », « À venir ») se déduit de ses dates.
+- Pas affichés : le sous-enjeu, simple étiquette ; la formulation de l'enjeu ; la nomenclature
+  détaillée des activités (table `Nomenclature_activites`), les métriques et l'inventaire des
+  données géographiques.
 - Les textes du plan sont repris tels que tapés dans Grist : paragraphes séparés par une ligne
-  vide, listes dont les lignes commencent par `*` ou `-`.
+  vide, listes dont les lignes commencent par `*` ou `-`, un bénéfice par ligne.
+- **Textes rédigés par Mon Parc Marin** : là où le plan de gestion dynamique n'a pas encore de
+  texte, Mon Parc Marin en a rédigé un dans Grist. Une marque en tête dit d'où il vient, et le site
+  l'affiche en badge :
+  - `[Résumé du plan]`, badge « Résumé du plan » : un résumé du plan de gestion adopté en 2019
+    ([PDF](https://www.consultations-publiques.developpement-durable.gouv.fr/IMG/pdf/plan_de_gestion_pnmca_-_partie_1_-_plan_de_gestion.pdf)),
+    qui finit par les pages utilisées ;
+  - `[Texte généré]`, badge « Texte généré » : un texte écrit à partir des seuls libellés du plan
+    dynamique (enjeux, niveaux d'exigence, indicateurs), là où le plan de 2019 ne dit rien d'utile.
+
+  L'équipe du parc relit le texte, puis retire la marque.
+
+Écarts à la maquette :
+
+- l'en-tête et le menu propres au parc ne sont pas repris (voir l'accueil du parc) ;
+- les nombres entre parenthèses des étiquettes ne sont pas repris : leur sens n'est pas défini ;
+- « Enjeux forts identifiés » devient « Sous-objectifs » : la notion n'est pas définie ;
+- la légende de la carte est sous la carte, comme ailleurs sur le site ;
+- les cartes d'action n'affichent pas le code EVA ; les encadrés de bénéfices n'ont pas de
+  pictogramme ;
+- les jauges des indicateurs et l'échelle du baromètre attendent leurs mesures : chaque indicateur
+  porte « Baromètre à venir » ;
+- les images sont des emplacements « Image à venir » ;
+- l'écran de choix d'une commune, d'une zone ou d'un point n'est pas fait.
 
 Questions ouvertes :
 
+- Les scores des indicateurs : par métrique ou par indicateur, sur quelle échelle (4 niveaux dans
+  la maquette, 1 à 5 dans les mesures) ?
 - Les noms des habitats viennent tels quels du plan de gestion, dans Grist : leurs suffixes
   (« - habitat prioritaire ») sont à harmoniser.
 - Hors des côtes, la photographie aérienne de l'IGN laisse des tuiles blanches : un fond

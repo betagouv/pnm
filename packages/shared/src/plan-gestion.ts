@@ -6,6 +6,9 @@ const idSchema = z.number().int().positive()
 
 const textSchema = z.string().min(1)
 
+// A DSFR pictogram, as "<category>/<name>": "institutions/navy-anchor"
+const pictogrammeSchema = z.string().regex(/^[a-z]+\/[a-z]+(?:-[a-z]+)*$/v)
+
 export const indicateurSchema = z.object({
   code: textSchema,
   libelle: textSchema,
@@ -16,6 +19,8 @@ export const sousObjectifSchema = z.object({
   libelle: textSchema,
   // What has to be reached
   niveauExigence: textSchema.optional(),
+  // The sous-objectif for everyone, in paragraphs separated by a blank line
+  synthese: textSchema.optional(),
   indicateurs: z.array(indicateurSchema),
 })
 
@@ -24,6 +29,10 @@ export const objectifSchema = z.object({
   libelle: textSchema,
   // A label that sorts the objectifs of an enjeu, nothing more
   sousEnjeu: textSchema.optional(),
+  // The objectif for everyone, in paragraphs separated by a blank line
+  synthese: textSchema.optional(),
+  // What has to be reached, for an objectif that the plan does not divide into sous-objectifs
+  niveauExigence: textSchema.optional(),
   sousObjectifs: z.array(sousObjectifSchema),
 })
 
@@ -34,6 +43,12 @@ export const enjeuSchema = z.object({
   formulation: textSchema.optional(),
   // In paragraphs separated by a blank line
   synthese: textSchema.optional(),
+  // A few sentences that present it
+  description: textSchema.optional(),
+  // What the enjeu brings to the sea and to the territory, one per line
+  beneficesMer: textSchema.optional(),
+  beneficesTerritoire: textSchema.optional(),
+  pictogramme: pictogrammeSchema.optional(),
   objectifs: z.array(objectifSchema),
 })
 
@@ -41,9 +56,13 @@ export const enjeuSchema = z.object({
 export const actionSchema = z.object({
   id: idSchema,
   libelle: textSchema,
+  // Its kind in the nomenclature of the actions: "Amélioration de la connaissance"
+  categorie: textSchema.optional(),
   // What the action does and how, in paragraphs separated by a blank line
   synthese: textSchema.optional(),
-  periode: textSchema.optional(),
+  // The days it starts and ends: 2026-02-25
+  debut: z.iso.date().optional(),
+  fin: z.iso.date().optional(),
   porteur: textSchema.optional(),
   operateurTechnique: textSchema.optional(),
   acteurOperationnel: textSchema.optional(),
@@ -54,13 +73,22 @@ export const actionSchema = z.object({
   sousObjectifs: z.array(idSchema),
 })
 
+// A species that the plan de gestion follows, under one of its sous-objectifs
+export const especeSchema = z.object({
+  id: idSchema,
+  nom: textSchema,
+  nomScientifique: textSchema.optional(),
+  // A short presentation, in paragraphs separated by a blank line
+  synthese: textSchema.optional(),
+  sousObjectif: idSchema.optional(),
+})
+
 // An activité that a porteur de projet can pick in the parc
 export const activiteSchema = z.object({
   id: idSchema,
   nom: textSchema,
   description: textSchema.optional(),
-  // A DSFR pictogram, as "<category>/<name>": "institutions/navy-anchor"
-  pictogramme: z.string().regex(/^[a-z]+\/[a-z]+(?:-[a-z]+)*$/v).optional(),
+  pictogramme: pictogrammeSchema.optional(),
 })
 
 // Advice of the plan de gestion to the porteurs de projet. It may be meant for some activités, for
@@ -82,6 +110,7 @@ export const planGestionSchema = z.object({
   document: z.url().optional(),
   enjeux: z.array(enjeuSchema),
   habitats: z.array(habitatSchema),
+  especes: z.array(especeSchema),
   actions: z.array(actionSchema),
   activites: z.array(activiteSchema),
   recommandations: z.array(recommandationSchema),
@@ -106,6 +135,7 @@ export type SousObjectif = z.infer<typeof sousObjectifSchema>
 export type Objectif = z.infer<typeof objectifSchema>
 export type Enjeu = z.infer<typeof enjeuSchema>
 export type Action = z.infer<typeof actionSchema>
+export type Espece = z.infer<typeof especeSchema>
 export type Activite = z.infer<typeof activiteSchema>
 export type Recommandation = z.infer<typeof recommandationSchema>
 export type PlanGestion = z.infer<typeof planGestionSchema>

@@ -171,6 +171,14 @@ et, en développement, le middleware Vite.
   contenu : habitats, activités proposées au porteur de projet, recommandations. Les codes
   d'habitat sont ceux qu'écrivent les gestionnaires du parc, pris tels quels. Les référentiels
   communs se limitent a priori à la liste des parcs.
+- Tous les documents de plan de gestion suivent le même modèle, et c'est à eux de le rejoindre :
+  la chaîne ne gère pas de variantes. Une table porte un nom au pluriel (`Enjeux`,
+  `Sous_objectifs`) ; une colonne a pour identifiant le nom du champ dans le code, en camelCase,
+  sans traduire les termes du domaine (`libelle`, `niveauExigence`), et un libellé en français
+  pour l'équipe du parc. L'identifiant est détaché du libellé : retoucher un libellé ne casse pas
+  la chaîne. Un lien porte le nom de ce qu'il vise (`enjeu`, `objectifs`) et, quand on le lit
+  dans les deux sens, c'est une référence bidirectionnelle de Grist, pas une formule. Pas de
+  colonne qui recopie l'identifiant de ligne ou une valeur d'une autre table.
 - Une couche n'appartient à aucun parc : nationale ou par façade maritime, elle se rattache aux
   habitats par leur code, quel que soit le plan de gestion qui les cite.
 - Une couche est traitée entière, jamais découpée à un parc : ce que la chaîne produit peut servir

@@ -19,6 +19,11 @@ export function text(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined
 }
 
+// A day, which Grist stores as the seconds from 1970 to its midnight in UTC: 2026-02-25
+export function date(value: unknown): string | undefined {
+  return typeof value === 'number' ? new Date(value * 1000).toISOString().slice(0, 10) : undefined
+}
+
 // A reference to a record of another table: Grist stores 0 for none
 export function ref(value: unknown): number | undefined {
   return typeof value === 'number' && value > 0 ? value : undefined

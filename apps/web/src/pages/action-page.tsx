@@ -1,5 +1,6 @@
 import {Link, useParams} from 'react-router'
 import {PlanText} from '../components/plan-text.tsx'
+import {formatPeriode} from '../format.ts'
 import {useParc} from '../parcs.ts'
 import {
   enjeuPath,
@@ -7,7 +8,7 @@ import {
   findObjectif,
   findSousObjectif,
   objectifAnchor,
-  sousObjectifAnchor,
+  sousObjectifPath,
   usePlanGestion,
 } from '../plan-gestion.ts'
 
@@ -17,7 +18,8 @@ export function ActionPage() {
   // The route answers 404 for an action that the plan does not hold
   const action = findAction(plan, useParams().actionId)!
   const details = [
-    ['Période', action.periode],
+    ['Catégorie', action.categorie],
+    ['Période', formatPeriode(action)],
     ['Porteur', action.porteur],
     ['Opérateur technique', action.operateurTechnique],
     ['Acteur opérationnel', action.acteurOperationnel],
@@ -29,7 +31,7 @@ export function ActionPage() {
 
   return (
     <>
-      <title>{`${action.libelle} - Plan de gestion - ${parc.nom} - Mon Parc Marin`}</title>
+      <title>{`${action.libelle} - Explorer les enjeux - ${parc.nom} - Mon Parc Marin`}</title>
       <h1>{action.libelle}</h1>
       {action.synthese === undefined
         ? <p>Le plan de gestion ne décrit pas encore cette action.</p>
@@ -62,10 +64,10 @@ export function ActionPage() {
                 <Link to={`${enjeuPath(parc.id, enjeu.id)}#${objectifAnchor(objectif.id)}`}>{objectif.libelle}</Link>
               </li>
             ))}
-            {sousObjectifs.map(({enjeu, sousObjectif}) => (
+            {sousObjectifs.map(({sousObjectif}) => (
               <li key={`sous-objectif-${sousObjectif.id}`}>
                 {'Sous-objectif : '}
-                <Link to={`${enjeuPath(parc.id, enjeu.id)}#${sousObjectifAnchor(sousObjectif.id)}`}>{sousObjectif.libelle}</Link>
+                <Link to={sousObjectifPath(parc.id, sousObjectif.id)}>{sousObjectif.libelle}</Link>
               </li>
             ))}
           </ul>

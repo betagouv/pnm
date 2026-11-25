@@ -18,6 +18,7 @@ camelCase, sans accents ni article (voir [AGENTS.md](../AGENTS.md)).
 | Pression | `pression` | Effet qu'une activité exerce sur le milieu marin. |
 | Plan de gestion | `planGestion` | Document qui fixe les objectifs de gestion d'un parc naturel marin. |
 | Enjeu | `enjeu` | Ce que le plan de gestion d'un parc vise à préserver : la qualité de l'eau, les espèces, les habitats… Il se décline en objectifs à long terme. |
+| Bénéfices | `beneficesMer`, `beneficesTerritoire` | Ce que la préservation d'un enjeu apporte, à la mer d'une part, au territoire d'autre part. |
 | Sous-enjeu | `sousEnjeu` | Étiquette qui range les objectifs à long terme d'un enjeu. |
 | Sous-objectif | `sousObjectif` | Déclinaison concrète d'un objectif à long terme, avec son niveau d'exigence et ses indicateurs. |
 | Niveau d'exigence | `niveauExigence` | Ce qu'un sous-objectif demande d'atteindre. |

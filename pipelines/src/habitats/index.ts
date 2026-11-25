@@ -28,14 +28,14 @@ const distDir = fileURLToPath(new URL('../../../data/dist/', import.meta.url))
 // The codes habitat élémentaire of a plan de gestion
 async function readCodes(source: GristSource): Promise<Set<string>> {
   const table = await readGristTable(source, 'Habitats')
-  const type = table.columns.find(column => column.id === 'Code_habitat_elementaire')?.fields.type
+  const type = table.columns.find(column => column.id === 'code')?.fields.type
 
   // Grist reads a code like 1110-5 as a date in any other type
   if (type !== 'Text') {
-    throw new Error(`${source.docId}: Code_habitat_elementaire is typed ${String(type)}, not Text`)
+    throw new Error(`${source.docId}: Habitats.code is typed ${String(type)}, not Text`)
   }
 
-  return new Set(table.records.flatMap(({fields}) => text(fields.Code_habitat_elementaire) ?? []))
+  return new Set(table.records.flatMap(({fields}) => text(fields.code) ?? []))
 }
 
 const rules = habitatLayers.flatMap(layer => layer.rules)

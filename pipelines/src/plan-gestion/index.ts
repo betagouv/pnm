@@ -10,6 +10,7 @@ import {
   type Action,
   type Activite,
   type Enjeu,
+  type Espece,
   type Habitat,
   type PlanGestion,
   type Recommandation,
@@ -17,6 +18,7 @@ import {
 } from '@pnm/shared'
 import type {GristRecord} from '@pnm/grist'
 import {
+  date,
   readGristTable,
   ref,
   refList,
@@ -56,43 +58,52 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
     sousObjectifs,
     indicateurs,
     habitats,
+    especes,
     actions,
     recommandations,
     activites,
-    guide,
+    planGestion,
   ] = await Promise.all([
-    readRecords('Table_des_enjeux'),
-    readRecords('Objectifs_Long_Terme'),
-    readRecords('Sous_Objectifs_Long_Terme'),
+    readRecords('Enjeux'),
+    readRecords('Objectifs'),
+    readRecords('Sous_objectifs'),
     readRecords('Indicateurs'),
     readRecords('Habitats'),
-    readRecords('Actions_recupere_depuis_EVA_'),
-    readRecords('Recommandations_MPM_'),
-    readRecords('Activites_MPM_'),
-    readRecords('Guide_d_utilisation'),
+    readRecords('Especes'),
+    readRecords('Actions'),
+    readRecords('Recommandations'),
+    readRecords('Activites'),
+    readRecords('Plan_de_gestion'),
   ])
 
-  // Grist refers to a record by its id, which these tables also hold as their own id
-  const objectifEnjeu = new Map(objectifs.map(({id, fields}) => [id, ref(fields.id_enjeu)]))
+  // The ids of the plan de gestion are those of the Grist records, which references point to
+  const objectifEnjeu = new Map(objectifs.map(({id, fields}) => [id, ref(fields.enjeu)]))
 
   const planEnjeux: Enjeu[] = enjeux.map(enjeu => ({
     id: enjeu.id,
-    libelle: text(enjeu.fields.Libelle_enjeu) ?? `Enjeu ${enjeu.id}`,
-    formulation: text(enjeu.fields.libelle_enjeu_plandegestion),
-    synthese: text(enjeu.fields.Synthese_enjeu),
-    objectifs: objectifs.filter(objectif => ref(objectif.fields.id_enjeu) === enjeu.id).map(objectif => ({
+    libelle: text(enjeu.fields.libelle) ?? `Enjeu ${enjeu.id}`,
+    formulation: text(enjeu.fields.formulation),
+    synthese: text(enjeu.fields.synthese),
+    description: text(enjeu.fields.description),
+    beneficesMer: text(enjeu.fields.beneficesMer),
+    beneficesTerritoire: text(enjeu.fields.beneficesTerritoire),
+    pictogramme: text(enjeu.fields.pictogramme),
+    objectifs: objectifs.filter(objectif => ref(objectif.fields.enjeu) === enjeu.id).map(objectif => ({
       id: objectif.id,
-      libelle: text(objectif.fields.Libelle_objectif) ?? `Objectif ${objectif.id}`,
-      sousEnjeu: text(objectif.fields.libelle_sous_enjeu),
-      sousObjectifs: sousObjectifs.filter(sousObjectif => ref(sousObjectif.fields.id_objectif) === objectif.id).map(sousObjectif => ({
+      libelle: text(objectif.fields.libelle) ?? `Objectif ${objectif.id}`,
+      sousEnjeu: text(objectif.fields.sousEnjeu),
+      synthese: text(objectif.fields.synthese),
+      niveauExigence: text(objectif.fields.niveauExigence),
+      sousObjectifs: sousObjectifs.filter(sousObjectif => ref(sousObjectif.fields.objectif) === objectif.id).map(sousObjectif => ({
         id: sousObjectif.id,
-        libelle: text(sousObjectif.fields.Libelle_sousobjectif) ?? `Sous-objectif ${sousObjectif.id}`,
-        niveauExigence: text(sousObjectif.fields.Niveau_exigence_sous_finalite),
+        libelle: text(sousObjectif.fields.libelle) ?? `Sous-objectif ${sousObjectif.id}`,
+        niveauExigence: text(sousObjectif.fields.niveauExigence),
+        synthese: text(sousObjectif.fields.synthese),
         indicateurs: indicateurs
-          .filter(indicateur => ref(indicateur.fields.id_sousobjectif) === sousObjectif.id)
+          .filter(indicateur => ref(indicateur.fields.sousObjectif) === sousObjectif.id)
           .flatMap(({fields}) => {
-            const code = text(fields.code_indica)
-            const libelle = text(fields.Libelle_indicateur)
+            const code = text(fields.code)
+            const libelle = text(fields.libelle)
             return code === undefined || libelle === undefined ? [] : [{code, libelle}]
           }),
       })),
@@ -101,15 +112,15 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
 
   // With their Grist id, which the recommandations refer to
   const keptHabitats: Array<{id: number, habitat: Habitat}> = habitats.flatMap(({id, fields}) => {
-    const code = text(fields.Code_habitat_elementaire)
-    const nom = text(fields.Habitat_elementaire)
+    const code = text(fields.code)
+    const nom = text(fields.nom)
 
     if (code === undefined || nom === undefined) {
       return []
     }
 
-    const codeGenerique = text(fields.Code_habitat_generique)
-    const nomGenerique = text(fields.Habitat_generique)
+    const codeGenerique = text(fields.codeHabitatGenerique)
+    const nomGenerique = text(fields.nomHabitatGenerique)
 
     return [{
       id,
@@ -119,28 +130,58 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
         habitatGenerique: codeGenerique === undefined || nomGenerique === undefined
           ? undefined
           : {code: codeGenerique, nom: nomGenerique},
-        synthese: text(fields.Synthese_habitat),
-        sousObjectif: ref(fields.Simplifie_sousobjectif),
+        synthese: text(fields.synthese),
+        sousObjectif: ref(fields.sousObjectif),
       },
     }]
   })
   const habitatCodes = new Map(keptHabitats.map(({id, habitat}) => [id, habitat.code]))
 
-  const planActivites: Activite[] = activites.flatMap(({id, fields}) => {
-    const nom = text(fields.Nom_de_l_activite)
+  const planEspeces: Espece[] = especes.flatMap(({id, fields}) => {
+    const nom = text(fields.nom)
     return nom === undefined
       ? []
       : [{
         id,
         nom,
-        description: text(fields.Description),
-        pictogramme: text(fields.Pictogramme),
+        nomScientifique: text(fields.nomScientifique),
+        synthese: text(fields.synthese),
+        sousObjectif: ref(fields.sousObjectif),
+      }]
+  })
+
+  const planActivites: Activite[] = activites.flatMap(({id, fields}) => {
+    const nom = text(fields.nom)
+    return nom === undefined
+      ? []
+      : [{
+        id,
+        nom,
+        description: text(fields.description),
+        pictogramme: text(fields.pictogramme),
       }]
   })
   const activiteIds = new Map(planActivites.map(({id}) => [id, id]))
+  const sousObjectifObjectif = new Map(sousObjectifs.map(({id, fields}) => [id, ref(fields.objectif)]))
+
+  // A recommandation names its most precise place in the plan: a sous-objectif, else an objectif,
+  // else an enjeu. Its enjeu follows from it
+  function recommandationEnjeu(id: number, fields: GristRecord['fields']): number | undefined {
+    const sousObjectif = ref(fields.sousObjectif)
+    const objectif = sousObjectif === undefined ? ref(fields.objectif) : sousObjectifObjectif.get(sousObjectif)
+    const enjeu = objectif === undefined ? ref(fields.enjeu) : objectifEnjeu.get(objectif)
+    // A less precise place, named as well, must agree
+    const isConsistent = (ref(fields.objectif) ?? objectif) === objectif && (ref(fields.enjeu) ?? enjeu) === enjeu
+
+    if (!isConsistent) {
+      throw new Error(`Recommandation ${id}: its sous-objectif, objectif and enjeu disagree`)
+    }
+
+    return enjeu
+  }
 
   const planRecommandations: Recommandation[] = recommandations.flatMap(({id, fields}) => {
-    const description = text(fields.Description)
+    const description = text(fields.description)
 
     if (description === undefined) {
       return []
@@ -148,18 +189,18 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
 
     return [{
       id,
-      titre: text(fields.Titre),
+      titre: text(fields.titre),
       description,
-      enjeu: ref(fields.Enjeu),
-      activites: lookUp(refList(fields.Activites), activiteIds, `Recommandation ${id}, activités`),
-      habitats: lookUp(refList(fields.Habitats), habitatCodes, `Recommandation ${id}, habitats`),
+      enjeu: recommandationEnjeu(id, fields),
+      activites: lookUp(refList(fields.activites), activiteIds, `Recommandation ${id}, activités`),
+      habitats: lookUp(refList(fields.habitats), habitatCodes, `Recommandation ${id}, habitats`),
     }]
   })
 
   const planActions: Action[] = actions.map(({id, fields}) => {
-    const actionObjectifs = refList(fields.id_objectif)
-    // An action may name its enjeu directly, as a number
-    const enjeu = ref(fields.id_enjeu)
+    const actionObjectifs = refList(fields.objectifs)
+    // An action may name its enjeu directly, besides those of its objectifs
+    const enjeu = ref(fields.enjeu)
     const actionEnjeux = new Set([
       ...(enjeu === undefined ? [] : [enjeu]),
       ...actionObjectifs.flatMap(objectif => objectifEnjeu.get(objectif) ?? []),
@@ -167,26 +208,29 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
 
     return {
       id,
-      libelle: text(fields.libelle_action) ?? `Action ${id}`,
-      synthese: text(fields.Synthese_protocole_action),
-      periode: text(fields.Periode_action),
-      porteur: text(fields.Porteur),
-      operateurTechnique: text(fields.Operateur_technique),
-      acteurOperationnel: text(fields.Acteur_op_action),
-      financement: text(fields.Financement),
+      libelle: text(fields.libelle) ?? `Action ${id}`,
+      categorie: text(fields.categorie),
+      synthese: text(fields.synthese),
+      debut: date(fields.debut),
+      fin: date(fields.fin),
+      porteur: text(fields.porteur),
+      operateurTechnique: text(fields.operateurTechnique),
+      acteurOperationnel: text(fields.acteurOperationnel),
+      financement: text(fields.financement),
       enjeux: [...actionEnjeux].toSorted((a, b) => a - b),
       objectifs: actionObjectifs,
-      sousObjectifs: refList(fields.id_sousobjectif),
+      sousObjectifs: refList(fields.sousObjectifs),
     }
   })
 
-  const document = guide.map(({fields}) => text(fields.Plan_de_gestion)).find(url => url !== undefined && isUrl(url))
+  const document = planGestion.map(({fields}) => text(fields.document)).find(url => url !== undefined && isUrl(url))
 
   // What does not fit the schema stops here, rather than in the API
   return planGestionSchema.parse({
     document,
     enjeux: planEnjeux,
     habitats: keptHabitats.map(({habitat}) => habitat),
+    especes: planEspeces,
     actions: planActions,
     activites: planActivites,
     recommandations: planRecommandations,
@@ -214,6 +258,7 @@ for (const source of plansGestion) {
     `${plan.enjeux.length} enjeux`,
     `${sousObjectifCount} sous-objectifs`,
     `${plan.habitats.length} habitats`,
+    `${plan.especes.length} espèces`,
     `${plan.actions.length} actions`,
     `${plan.activites.length} activités`,
     `${plan.recommandations.length} recommandations`,
