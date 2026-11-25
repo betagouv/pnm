@@ -20,15 +20,16 @@ npm run build       # build du front, avant npm start
 - Jamais de trace de session d'agent de code dans les commits et les PR (`Co-Authored-By`, lien de
   session, « Generated with »).
 - Une branche par sujet depuis `main`. Pas de commit direct sur `main`.
-- Commits en Conventional Commits, en anglais : `feat(web): add parc selection screen`.
+- Commits en Conventional Commits, en français : `feat(web): ajoute l'écran de choix du parc`.
 - PR et issues en français.
 
 ## Langue
 
-- Code en anglais, sauf le domaine métier, qu'on ne traduit pas : `listParcs()`,
+- Identifiants du code en anglais, sauf le domaine métier, qu'on ne traduit pas : `listParcs()`,
   `porteurProjet`, et non `park`, `projectOwner`. Identifiants sans accents. Référence :
   [`docs/glossaire.md`](docs/glossaire.md).
-- Interface et `docs/` en français.
+- Commentaires du code, commits, PR, issues, interface et `docs/` en français. Les commentaires
+  encore en anglais se traduisent quand on touche leur code.
 
 ## Types
 
