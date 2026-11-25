@@ -64,22 +64,34 @@ function habitatsFilter(habitats: readonly Habitat[]): ExpressionSpecification {
   return ['in', ['get', 'habitat'], ['literal', habitats.map(habitat => habitat.code)]]
 }
 
-// Each habitat in its colour
-function habitatsColor(habitats: readonly Habitat[]): ExpressionSpecification | string {
-  const [first, ...others] = habitats
+// Les habitats qui partagent leur habitat générique partagent une couleur : une carte de tout le parc
+// en montre plus que de couleurs qu'on distingue. Un groupe d'un seul habitat garde le nom de son
+// habitat, un groupe de plusieurs prend celui de l'habitat générique
+type HabitatGroup = {
+  readonly key: string
+  readonly label: string
+  readonly codes: readonly string[]
+}
 
-  if (!first) {
-    return habitatColor
+function habitatGroups(habitats: readonly Habitat[]): HabitatGroup[] {
+  const groups = new Map<string, Habitat[]>()
+
+  for (const habitat of habitats) {
+    const key = habitat.habitatGenerique?.code ?? habitat.code
+    groups.set(key, [...groups.get(key) ?? [], habitat])
   }
 
-  return [
-    'match',
-    ['get', 'habitat'],
-    first.code,
-    habitatColorAt(0),
-    ...others.flatMap((habitat, index) => [habitat.code, habitatColorAt(index + 1)]),
-    habitatColor,
-  ] as ExpressionSpecification
+  return [...groups].map(([key, members]) => ({
+    key,
+    label: members.length === 1 || members[0]!.habitatGenerique === undefined ? members.map(habitat => habitat.nom).join(', ') : members[0]!.habitatGenerique.nom,
+    codes: members.map(habitat => habitat.code),
+  }))
+}
+
+// Chaque groupe dans sa couleur
+function habitatsColor(groups: readonly HabitatGroup[]): ExpressionSpecification | string {
+  const [first, firstColor, ...pairs] = groups.flatMap((group, index) => group.codes.flatMap(code => [code, habitatColorAt(index)]))
+  return first === undefined || firstColor === undefined ? habitatColor : ['match', ['get', 'habitat'], first, firstColor, ...pairs, habitatColor] as ExpressionSpecification
 }
 
 function fillOpacity(highlightedCode: string | undefined): ExpressionSpecification {
@@ -125,6 +137,7 @@ export function HabitatMap({
   const containerRef = useRef<HTMLDivElement>(null)
   const [map, setMap] = useState<MapLibreMap>()
   const features = useMemo(() => projetFeatures(elements), [elements])
+  const groups = useMemo(() => habitatGroups(habitats), [habitats])
   const hasProjet = elements.length > 0
 
   useEffect(() => {
@@ -164,10 +177,10 @@ export function HabitatMap({
 
     map.setFilter('habitat-fond', habitatsFilter(habitats))
     map.setFilter('habitat-bord', habitatsFilter(habitats))
-    map.setPaintProperty('habitat-fond', 'fill-color', habitatsColor(habitats))
-    map.setPaintProperty('habitat-bord', 'line-color', habitatsColor(habitats))
+    map.setPaintProperty('habitat-fond', 'fill-color', habitatsColor(groups))
+    map.setPaintProperty('habitat-bord', 'line-color', habitatsColor(groups))
     map.getCanvas().setAttribute('aria-label', mapTitle(habitats, hasProjet))
-  }, [map, habitats, hasProjet])
+  }, [map, habitats, groups, hasProjet])
 
   useEffect(() => {
     if (!map) {
@@ -183,7 +196,7 @@ export function HabitatMap({
       <div ref={containerRef} style={{height: 'min(65vh, 36rem)'}} />
       <div className='fr-grid-row fr-grid-row--middle fr-mt-1w'>
         <ul className='fr-raw-list fr-grid-row fr-col-12 fr-col-md' aria-label='Légende de la carte'>
-          {habitats.map((habitat, index) => <LegendItem key={habitat.code} color={habitatColorAt(index)} label={habitat.nom} />)}
+          {groups.map((group, index) => <LegendItem key={group.key} color={habitatColorAt(index)} label={group.label} />)}
           {hasProjet && <LegendItem color={elementColor} label='Votre projet' />}
           <LegendItem isDashed label='Limite du parc' />
         </ul>

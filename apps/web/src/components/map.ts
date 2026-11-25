@@ -33,6 +33,9 @@ export const habitatColors = [
   fr.colors.getHex({isDark: false}).options.purpleGlycine.main494.default,
   fr.colors.getHex({isDark: false}).options.pinkMacaron.main689.default,
   fr.colors.getHex({isDark: false}).options.blueCumulus.main526.default,
+  fr.colors.getHex({isDark: false}).options.greenArchipel.main557.default,
+  fr.colors.getHex({isDark: false}).options.brownCaramel.main648.default,
+  fr.colors.getHex({isDark: false}).options.pinkTuile.main556.default,
 ] as const
 
 // IGN aerial photographs, from the Géoplateforme

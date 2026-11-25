@@ -205,8 +205,9 @@ par l'API :
 - La surface couverte par le projet, puis une étiquette (tag) sélectionnable du DSFR par habitat,
   en deux groupes : **dans votre zone de projet** et **à proximité** (à moins de la tolérance du
   croisement).
-- Une carte de tous ces habitats sur la zone du projet, chacun dans sa couleur, lue dans les
-  PMTiles des habitats, avec une légende. Les contours des habitats sont élargis et simplifiés par
+- Une carte de tous ces habitats sur la zone du projet, lue dans les PMTiles des habitats, avec une
+  légende. Les habitats qui partagent un habitat générique partagent une couleur, et la légende les
+  nomme par lui (« Récifs ») : un parc en compte plus que de couleurs qu'on distingue. Les contours des habitats sont élargis et simplifiés par
   la chaîne : la page le dit.
 - Choisir une étiquette met son habitat en surbrillance sur la carte : les autres s'estompent.
   Dessous viennent sa distance s'il est à proximité, les éléments du projet qu'il concerne quand il
