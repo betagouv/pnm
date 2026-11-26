@@ -120,11 +120,15 @@ La maquette reste indicative. Son titre « Cap projet » n'est pas repris : la p
 - Le porteur choisit une activité parmi des boutons radio riches du DSFR, avec pictogramme. La
   maquette montrait des tuiles, mais les tuiles DSFR servent à naviguer et n'ont pas d'état
   sélectionné. Continuer sans choix affiche une erreur sur le groupe de boutons.
-- Les activités proposées sont celles du plan de gestion du parc, dans la table `Activites` de son
-  document Grist : chaque parc a les siennes. Le projet garde l'identifiant Grist de
-  l'activité.
-- **Ajouter une activité** : une ligne dans cette table, avec son nom, sa description et son
-  pictogramme, puis un passage de la chaîne de traitement. Le pictogramme est désigné par sa
+- Les activités proposées sont les activités actives du plan de gestion du parc, dans la table
+  `Activites` de son document Grist : chaque parc a les siennes. Le projet garde l'identifiant
+  Grist de l'activité. Un projet dont l'activité n'est plus active revient à l'étape 1.
+- Au Cap Corse, seules trois activités sont actives : « Manifestation nautique », « Dragage » et
+  « Installations sur la plage », créée pour les autorisations d'occupation temporaire (AOT) de
+  plage. Les autres restent dans le plan, inactives. Une recommandation qui ne vise que des
+  activités inactives ne s'affiche donc plus dans le parcours.
+- **Ajouter une activité** : une ligne dans cette table, avec son nom, sa description, son
+  pictogramme et la case « Active » cochée, puis un passage de la chaîne de traitement. Le pictogramme est désigné par sa
   catégorie et son nom dans le DSFR, par exemple `institutions/navy-anchor`. Un nom inconnu du DSFR
   laisse sa place vide.
 - La description de « Rechargement de plage » et les pictogrammes des activités autres que

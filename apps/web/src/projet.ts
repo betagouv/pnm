@@ -20,7 +20,8 @@ export function projetStepPath(parcId: string, step: ProjetStep['path']): string
   return `${parcPath(parcId)}/${step}`
 }
 
-// The activités of the parc, from its plan de gestion. A parc not yet open has none
+// Les activités que le porteur de projet peut choisir : les actives du plan de gestion du parc. Un
+// parc pas encore ouvert n'en a pas
 export async function loadActivites({params}: LoaderFunctionArgs): Promise<Activite[]> {
   const parcs = await fetchParcs()
   const parc = parcs.find(candidate => candidate.id === params.parcId)
@@ -30,7 +31,7 @@ export async function loadActivites({params}: LoaderFunctionArgs): Promise<Activ
   }
 
   const plan = await fetchPlanGestion(parc.id)
-  return plan.activites
+  return plan.activites.filter(activite => activite.active)
 }
 
 export function useActivites(): Activite[] {

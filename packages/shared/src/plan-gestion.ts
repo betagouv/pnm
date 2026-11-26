@@ -83,12 +83,14 @@ export const especeSchema = z.object({
   sousObjectif: idSchema.optional(),
 })
 
-// An activité that a porteur de projet can pick in the parc
+// Une activité du parc. Le porteur de projet ne choisit que parmi les actives ; les autres restent
+// dans le plan, pour les recommandations qui les visent
 export const activiteSchema = z.object({
   id: idSchema,
   nom: textSchema,
   description: textSchema.optional(),
   pictogramme: pictogrammeSchema.optional(),
+  active: z.boolean(),
 })
 
 // Advice of the plan de gestion to the porteurs de projet. It may be meant for some activités, for

@@ -202,6 +202,7 @@ spécifique aux projets qu'elle concerne.
 | `nom` | Nom | Texte | Obligatoire : le libellé du choix |
 | `description` | Description | Texte | Le texte d'aide sous le libellé |
 | `pictogramme` | Pictogramme | Texte | À côté du choix |
+| `active` | Active | Booléen | Lu, pas affiché : seules les activités actives sont proposées au porteur de projet |
 
 ### `Recommandations`
 

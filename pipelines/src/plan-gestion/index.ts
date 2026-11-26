@@ -159,6 +159,7 @@ async function readPlan(source: GristSource): Promise<PlanGestion> {
         nom,
         description: text(fields.description),
         pictogramme: text(fields.pictogramme),
+        active: fields.active === true,
       }]
   })
   const activiteIds = new Map(planActivites.map(({id}) => [id, id]))
