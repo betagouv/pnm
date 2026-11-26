@@ -195,6 +195,12 @@ Trois enjeux, dans cet ordre : **Gouvernance**, **Habitats** et **Espèces**. Ch
 (card) DSFR, qui est un bouton : la choisir affiche l'enjeu à côté, ou dessous sur mobile. La carte
 résume ce que le projet rencontre (« 2 habitats dans votre zone »). Habitats est choisi d'emblée.
 
+Sous le titre de l'enjeu choisi, un lien mène à l'enjeu du même nom dans l'explorateur des enjeux
+(« Explorer l'enjeu Habitats du Parc »), si le plan de gestion du parc en a un. Les trois enjeux de
+l'étape sont fixes, ceux de l'explorateur sont une donnée : seul le libellé les relie, et un enjeu
+renommé dans Grist perd son lien. Si le plan de gestion ne peut être lu, l'étape s'affiche sans ces
+liens.
+
 Gouvernance et Espèces attendent leurs données : chacun dit, sous un badge « À venir », ce qu'il
 montrera. Ce que recouvre la gouvernance (zones de gouvernance du croisement ?) est **à
 confirmer**.
@@ -287,8 +293,8 @@ valider par le parc. Leur identifiant TAXREF (`cdNom`) n'y est pas encore, **à 
 - `enjeux` mène au premier enjeu du plan. Choisir une étiquette change d'enjeu sans faire
   remonter la page : l'adresse porte l'enjeu, qu'on peut partager.
 - Un fil d'Ariane situe chaque page : une page de détail se range sous l'enjeu dont elle relève,
-  une action sous le premier enjeu qu'elle sert. L'aperçu d'un habitat, à l'étape 3, mène à sa
-  fiche.
+  une action sous le premier enjeu qu'elle sert. À l'étape 3, chaque enjeu mène à celui du même
+  nom, et l'aperçu d'un habitat à sa fiche.
 - Les chiffres d'un enjeu se calculent : ses sous-objectifs et les recommandations qui le servent.
 - Le statut d'une action (« En cours », « Terminée », « À venir ») se déduit de ses dates.
 - Pas affichés : le sous-enjeu, simple étiquette ; la formulation de l'enjeu ; la nomenclature

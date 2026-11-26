@@ -3,6 +3,7 @@ import type {
   Config,
   Croisement,
   Element,
+  Enjeu,
   MultiPolygon,
 } from '@pnm/shared'
 import type {LoaderFunctionArgs} from 'react-router'
@@ -38,7 +39,7 @@ export async function fetchCroisement(parc: string, localisation: readonly Eleme
   return postApi<Croisement>('/croisement', {parc, localisation})
 }
 
-// What the habitats step has to show
+// Ce que l'étape des enjeux montre des habitats
 export type HabitatsStepData =
   | {
     readonly status: 'loaded'
@@ -46,12 +47,27 @@ export type HabitatsStepData =
     readonly perimetre: MultiPolygon
     readonly tilesUrl: string
   }
-  // The croisement failed: the porteur de projet can go on
+  // Le croisement a échoué : le porteur de projet peut continuer
   | {readonly status: 'unavailable'}
   | {readonly status: 'noLocalisation'}
 
-export async function loadHabitatsStep({params}: LoaderFunctionArgs): Promise<HabitatsStepData> {
-  const parc = params.parcId!
+// Ce que montre l'étape des enjeux : les habitats que rencontre le projet, et les enjeux du plan de
+// gestion, vers lesquels elle renvoie dans l'explorateur
+export type EnjeuxStepData = {
+  readonly habitats: HabitatsStepData
+  // Vide pour un parc sans plan de gestion, ou si le plan ne peut être lu : l'étape s'en passe
+  readonly planEnjeux: readonly Enjeu[]
+}
+
+export async function loadEnjeuxStep({params}: LoaderFunctionArgs): Promise<EnjeuxStepData> {
+  const [habitats, plan] = await Promise.all([
+    loadHabitatsStep(params.parcId!),
+    fetchPlanGestion(params.parcId!).catch(() => undefined),
+  ])
+  return {habitats, planEnjeux: plan?.enjeux ?? []}
+}
+
+async function loadHabitatsStep(parc: string): Promise<HabitatsStepData> {
   const localisation = readProjet(parc)?.localisation ?? []
 
   if (localisation.length === 0) {

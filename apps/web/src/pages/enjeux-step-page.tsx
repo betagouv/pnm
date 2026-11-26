@@ -1,5 +1,10 @@
 import {Alert} from '@codegouvfr/react-dsfr/Alert'
-import type {Activite, Element, HabitatCroise} from '@pnm/shared'
+import type {
+  Activite,
+  Element,
+  Enjeu,
+  HabitatCroise,
+} from '@pnm/shared'
 import {useMemo, useRef, useState} from 'react'
 import {Link, Navigate, useLoaderData} from 'react-router'
 import {ActiviteSummary} from '../components/activite-summary.tsx'
@@ -9,9 +14,9 @@ import {EnjeuCards} from '../components/enjeu-cards.tsx'
 import {HabitatsApercu} from '../components/habitats-apercu.tsx'
 import {StepNavigation} from '../components/step-navigation.tsx'
 import {formatDistance, formatSurface} from '../format.ts'
-import type {HabitatsStepData} from '../habitats.ts'
+import type {EnjeuxStepData, HabitatsStepData} from '../habitats.ts'
 import {useParc} from '../parcs.ts'
-import {habitatPath} from '../plan-gestion.ts'
+import {enjeuPath, habitatPath} from '../plan-gestion.ts'
 import {useProjet} from '../projet-storage.ts'
 import {projetStepPath, useActivite} from '../projet.ts'
 
@@ -19,7 +24,7 @@ export function EnjeuxStepPage() {
   const parc = useParc()!
   const activite = useActivite(parc.id)
   const projet = useProjet(parc.id)
-  const habitats = useLoaderData<HabitatsStepData>()
+  const {habitats, planEnjeux} = useLoaderData<EnjeuxStepData>()
 
   if (!activite || !projet) {
     return <Navigate replace to={projetStepPath(parc.id, 'activite')} />
@@ -35,6 +40,7 @@ export function EnjeuxStepPage() {
       activite={activite}
       localisation={projet.localisation ?? []}
       habitats={habitats}
+      planEnjeux={planEnjeux}
     />
   )
 }
@@ -66,6 +72,7 @@ type EnjeuxProps = {
   readonly activite: Activite
   readonly localisation: readonly Element[]
   readonly habitats: HabitatsStepData
+  readonly planEnjeux: readonly Enjeu[]
 }
 
 function Enjeux({
@@ -73,8 +80,9 @@ function Enjeux({
   activite,
   localisation,
   habitats,
+  planEnjeux,
 }: EnjeuxProps) {
-  // The habitats first: the other enjeux have nothing to show yet
+  // Les habitats d'abord : les autres enjeux n'ont encore rien à montrer
   const [selectedId, setSelectedId] = useState<EnjeuId>('habitats')
   const [highlightedCode, setHighlightedCode] = useState<string>()
   const apercuHeadingRef = useRef<HTMLHeadingElement>(null)
@@ -84,11 +92,13 @@ function Enjeux({
     {id: 'especes' as const, titre: 'Espèces', resume: 'À venir'},
   ], [habitats])
   const selected = enjeux.find(enjeu => enjeu.id === selectedId)!
+  // L'enjeu du même nom dans le plan de gestion du parc, que présente l'explorateur des enjeux
+  const planEnjeu = planEnjeux.find(enjeu => enjeu.libelle === selected.titre)
 
   function select(id: EnjeuId) {
     setSelectedId(id)
-    // Below the cards on a small screen: the heading of the enjeu comes into view, and screen
-    // readers announce it
+    // Sous les cartes sur un petit écran : le titre de l'enjeu apparaît, et les lecteurs d'écran
+    // l'annoncent
     requestAnimationFrame(() => {
       apercuHeadingRef.current?.focus()
     })
@@ -104,6 +114,13 @@ function Enjeux({
         </div>
         <section className='fr-col-12 fr-col-lg-8' aria-labelledby='apercu-enjeu'>
           <h3 ref={apercuHeadingRef} id='apercu-enjeu' tabIndex={-1} className='fr-h4 fr-mb-2w'>{selected.titre}</h3>
+          {planEnjeu && (
+            <p>
+              <Link className='fr-link fr-icon-arrow-right-line fr-link--icon-right' to={enjeuPath(parcId, planEnjeu.id)}>
+                {`Explorer l'enjeu ${planEnjeu.libelle} du Parc`}
+              </Link>
+            </p>
+          )}
           {selectedId === 'gouvernance' && (
             <ComingSoon>Les zones de gouvernance que rencontre votre projet apparaîtront ici.</ComingSoon>
           )}

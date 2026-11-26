@@ -10,7 +10,7 @@ import {
 import {AppLayout} from './app-layout.tsx'
 import {PageLayout} from './components/page-layout.tsx'
 import {ActiviteStepPage} from './pages/activite-step-page.tsx'
-import {loadEnjeuPage, loadHabitatPage, loadHabitatsStep} from './habitats.ts'
+import {loadEnjeuPage, loadEnjeuxStep, loadHabitatPage} from './habitats.ts'
 import {ActionPage} from './pages/action-page.tsx'
 import {EnjeuxLayout} from './pages/enjeux-layout.tsx'
 import {ErrorPage} from './pages/error-page.tsx'
@@ -111,7 +111,7 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: 'enjeux',
-                    loader: loadHabitatsStep,
+                    loader: loadEnjeuxStep,
                     lazy: {
                       async Component() {
                         const {EnjeuxStepPage} = await import('./pages/enjeux-step-page.tsx')
